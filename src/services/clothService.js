@@ -4,21 +4,25 @@ export default class ClothService {
         defaultUrl: "http://localhost:8983"    
     }
 
-    getClothes = async () => {
+    getResource = async (url) => {
         const {defaultUrl} = this.state
-        const responseJson = fetch(
-            `${defaultUrl}/clothes`, 
-            {method: "GET", headers: {"Content-Type":"application/json"}}
-        ).then(response => response.json())
-        return await JSON.parse(responseJson)
+
+        const res = await fetch(`${defaultUrl}${url}`);
+    
+        if (!res.ok) {
+          throw new Error(`Could not fetch ${url}` +
+            `, received ${res.status}`);
+        }
+        return await res.json();
+    }
+
+    getClothes = async () => {
+        const response = await this.getResource("/clothes")
+        return await response
     }
 
     getClothesBySex = async (sex) => {
-        const {defaultUrl} = this.state
-        const responseJson = fetch(
-            `${defaultUrl}/clothes/searching`,
-            {method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({sex: sex})}
-        ).then(response => response.json())
-        return await JSON.parse(responseJson)
+        const response = await this.getResource(`/clothes/${sex}`)
+        return await response
     }
 }

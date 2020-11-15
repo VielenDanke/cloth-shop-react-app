@@ -4,6 +4,7 @@ import * as actions from "../../actions"
 import {Link} from 'react-router-dom';
 
 const ClothHeader = ({clothService, clothes, clothLoaded}) => {
+
     return (
         <div>
             <Link to="/clothes/" onClick={() => clothLoaded(clothService.getClothes())}>Clothes</Link>

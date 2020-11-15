@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import * as actions from "../../actions"
 
 const ClothList = ({clothService, clothState, clothLoaded}) => {
-    const {clothes} = clothState
+
+    let {clothes} = clothState
 
     if (clothes && clothes.length !== 0) {
 
