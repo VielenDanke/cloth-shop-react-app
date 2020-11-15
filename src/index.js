@@ -1,17 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import {Provider} from "react-redux"
+import store from "./store"
+import ErrorBoundry from "./components/error-boundry"
+import ClothServiceContext from "./components/cloth-service-context"
+import ClothService from "./services/clothService"
+import {BrowserRouter as Router} from "react-router-dom"
+import App from './components/app'
+
+const clothService = new ClothService()
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <ErrorBoundry>
+      <ClothServiceContext.Provider value={clothService}>
+        <Router>
+          <App/>
+        </Router>
+      </ClothServiceContext.Provider>
+    </ErrorBoundry>
+  </Provider>,
   document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+)
