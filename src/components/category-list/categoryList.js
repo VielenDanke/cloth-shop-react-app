@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {categoryLoaded} from "../../actions"
-import {Route, Link} from 'react-router-dom'
-import ClothList from '../cloth-list'
+import {Link} from 'react-router-dom'
 
 class CategoryList extends Component {
 
@@ -14,7 +13,7 @@ class CategoryList extends Component {
     }
 
     render() {
-        const {categories, clothService} = this.props
+        const {categories} = this.props
 
         return (
             <ul>
@@ -22,9 +21,6 @@ class CategoryList extends Component {
                     categories.map(cat => {
                         return (
                             <li key={cat.id}>
-                                <Route path={`/categories/${cat.category}`}>
-                                    <ClothList fetchedClothList={clothService.getClothesByCategory(`${cat.category}`)}/>
-                                </Route>
                                 <Link to={`/categories/${cat.category}`}>{cat.category}</Link>
                             </li>
                         )

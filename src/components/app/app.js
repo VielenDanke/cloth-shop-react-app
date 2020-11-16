@@ -22,6 +22,9 @@ class App extends Component {
         <Route path={"/clothes/woman"}>
           <ClothList fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
         </Route>
+        <Route path='/categories/:category' render={({match}) => {
+                            const {category} = match.params;
+                        return <ClothList fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
         <CategoryList categoryService={categoryService} clothService={clothService}/>
       </div>
     );
