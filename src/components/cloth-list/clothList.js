@@ -3,6 +3,9 @@ import {connect} from 'react-redux'
 // import * as actions from "../../actions"
 import WithClothService from "../hoc"
 import Spinner from "../spinner"
+import ClothItem from "../cloth-item"
+
+import "./cloth-list.scss"
 
 class ClothList extends Component {
 
@@ -17,11 +20,11 @@ class ClothList extends Component {
 
             const renderClothList = clothes.map(item => {
                 return (
-                    <li key={item.id}>{item.name}</li>
+                    <ClothItem clothItem={item}/>
                 )
             })
             return (
-                <ul>
+                <ul className="cloth__list">
                     {renderClothList}
                 </ul>
                          
