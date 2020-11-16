@@ -21,7 +21,7 @@ class CategoryList extends Component {
                     categories.map(cat => {
                         return (
                             <li key={cat.id}>
-                                <Link to={`/categories/${cat.category}`}>{cat.category}</Link>
+                                <Link to={{pathname: `/categories/${cat.category}/`}}>{cat.category}</Link>
                             </li>
                         )
                     })

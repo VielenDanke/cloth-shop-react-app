@@ -13,19 +13,19 @@ class App extends Component {
     return (
       <div className="app">
         <ClothHeader/>
-        <Route path="/clothes/all">
+        <CategoryList categoryService={categoryService} clothService={clothService}/>
+        <Route path="/clothes/all" exact>
           <ClothList fetchedClothList={clothService.getClothes()}/>
         </Route>
-        <Route path={"/clothes/man"}>
+        <Route path={"/clothes/man"} exact>
           <ClothList fetchedClothList={clothService.getClothesBySex("MAN")}/>
         </Route>
-        <Route path={"/clothes/woman"}>
+        <Route path={"/clothes/woman"} exact>
           <ClothList fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
         </Route>
-        <Route path='/categories/:category' render={({match}) => {
-                            const {category} = match.params;
-                        return <ClothList fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
-        <CategoryList categoryService={categoryService} clothService={clothService}/>
+        <Route path='/categories/:category' exact render={({match}) => {
+            const {category} = match.params;
+            return <ClothList pathVariable={category} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
       </div>
     );
   }
