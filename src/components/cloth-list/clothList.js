@@ -17,6 +17,16 @@ class ClothList extends Component {
         fetchedClothList.then(res => clothLoaded(res))
     }
 
+    componentDidUpdate(prevProps) {
+        const {fetchedClothList, clothLoaded, clothRequested} = this.props
+
+        if (this.props.pathVariable !== prevProps.pathVariable) {
+            clothRequested()
+
+            fetchedClothList.then(res => clothLoaded(res))
+        }
+    }
+
     render() {
         const {clothes, loading} = this.props
 

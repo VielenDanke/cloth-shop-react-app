@@ -14,16 +14,17 @@ class App extends Component {
       <div className="app">
         <ClothHeader/>
         <CategoryList categoryService={categoryService} clothService={clothService}/>
-        <Route path="/clothes/all" exact>
-          <ClothList fetchedClothList={clothService.getClothes()}/>
-        </Route>
-        <Route path={"/clothes/man"} exact>
-          <ClothList fetchedClothList={clothService.getClothesBySex("MAN")}/>
-        </Route>
-        <Route path={"/clothes/woman"} exact>
-          <ClothList fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
-        </Route>
-        <Route path='/categories/:category' exact render={({match}) => {
+        <Route path="/clothes/all" exact render={({location}) => {
+          return <ClothList pathVariable={location.pathname} fetchedClothList={clothService.getClothes()}/>
+        }}/>
+        <Route path="/clothes/man" exact render={({location}) => {
+          return <ClothList pathVariable={location.pathname} 
+          fetchedClothList={clothService.getClothesBySex("MAN")}/>
+        }}/>
+        <Route path="/clothes/woman"exact render={({location}) => {
+          return <ClothList pathVariable={location.pathname}  fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
+        }}/>
+        <Route path='/categories/:category' render={({match}) => {
             const {category} = match.params;
             return <ClothList pathVariable={category} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
       </div>
