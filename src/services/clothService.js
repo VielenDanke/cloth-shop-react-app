@@ -11,7 +11,7 @@ export default class ClothService {
         }
         return await res.json();
     }
-
+    
     getSearchingResource = async (method, headers, body) => {
         const searchingDefaultUrl = `${this._defaultUrl}/clothes/searching`
 

@@ -17,6 +17,7 @@ class ClothList extends Component {
         fetchedClothList.then(res => clothLoaded(res))
     }
 
+
     render() {
         const {clothes, loading} = this.props
 
