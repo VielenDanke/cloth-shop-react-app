@@ -21,12 +21,12 @@ class App extends Component {
           return <ClothList pathVariable={location.pathname} 
           fetchedClothList={clothService.getClothesBySex("MAN")}/>
         }}/>
-        <Route path="/clothes/woman"exact render={({location}) => {
+        <Route path="/clothes/woman" exact render={({location}) => {
           return <ClothList pathVariable={location.pathname}  fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
         }}/>
-        <Route path='/categories/:category' render={({match}) => {
+        <Route path='/categories/:category' render={({match, location}) => {
             const {category} = match.params;
-            return <ClothList pathVariable={category} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
+            return <ClothList pathVariable={location.pathname} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
       </div>
     );
   }
