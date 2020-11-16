@@ -1,34 +1,42 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import * as actions from "../../actions"
+// import * as actions from "../../actions"
+import WithClothService from "../hoc"
+import Spinner from "../spinner"
 
-const ClothList = ({clothService, clothState, clothLoaded}) => {
+class ClothList extends Component {
 
-    let {clothes} = clothState
+    render() {
+        const {clothes, loading} = this.props
 
-    if (clothes && clothes.length !== 0) {
+        if (loading) {
+            return <Spinner/>
+        }
 
-        const renderClothList = clothes.map(item => {
+        if (clothes && clothes.length !== 0) {
+
+            const renderClothList = clothes.map(item => {
+                return (
+                    <li key={item.id}>{item.name}</li>
+                )
+            })
             return (
-                <li key={item.id}>{item.name}</li>
+                <ul>
+                    {renderClothList}
+                </ul>
+                         
             )
-        })
-        return (
-            <ul>
-                {renderClothList}
-            </ul>
-                     
-        )
-    } else {
-        return <h1>Empty</h1>
+        } else {
+            return <h1>Empty</h1>
+        }
     }
 
 }
 
 const mapStateToProps = (state) => {
     return {
-        clothState: state
+        clothes: state.clothes
     }
 }
 
-export default connect(mapStateToProps, actions)(ClothList)
+export default WithClothService()(connect(mapStateToProps)(ClothList))

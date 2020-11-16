@@ -6,6 +6,13 @@ const clothLoaded = (clothList) => {
     }
 }
 
+const clothRequested = () => {
+    return {
+        type: "CLOTH_REQUESTED"
+    }
+}
+
 export {
-    clothLoaded
+    clothLoaded,
+    clothRequested
 }

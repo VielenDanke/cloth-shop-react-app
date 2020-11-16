@@ -1,18 +1,15 @@
 import React from 'react'
-import WithClothService from "../hoc"
 import ClothHeader from "../cloth-header"
 import ClothList from "../cloth-list"
 import { Route } from 'react-router-dom'
 
-const App = ({clothService}) => {
+const App = () => {
   return (
     <div className="app">
-      <ClothHeader clothService={clothService}/>
-      <Route path={["/clothes", "/clothes/man", "/clothes/woman"]} render={() => {
-        return <ClothList clothService={clothService}/>
-      }}/>
+      <ClothHeader/>
+      <Route path={["/clothes", "/clothes/man", "/clothes/woman"]} component={ClothList}/>
     </div>
   );
 }
 
-export default WithClothService()(App)
+export default App

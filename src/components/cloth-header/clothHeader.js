@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import * as actions from "../../actions"
+import {clothLoaded} from "../../actions"
+import WithClothService from "../hoc"
 import {Link} from 'react-router-dom';
 
 const ClothHeader = ({clothService, clothes, clothLoaded}) => {
@@ -16,8 +17,16 @@ const ClothHeader = ({clothService, clothes, clothLoaded}) => {
 
 const mapStateToProps = (state) => {
     return {
-        clothes: state
+        clothes: state.clothes
     }
 }
 
-export default connect(mapStateToProps, actions)(ClothHeader)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        clothLoaded: (clothes) => {
+            clothes.then(res => dispatch(clothLoaded(res)))
+        }
+    }
+}
+
+export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(ClothHeader))
