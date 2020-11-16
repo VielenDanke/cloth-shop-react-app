@@ -8,14 +8,14 @@ const App = ({clothService}) => {
   return (
     <div className="app">
       <ClothHeader/>
-      <Route path="/clothes">
-        <ClothList clothes={clothService.getClothes()}/>
+      <Route path="/clothes/all">
+        <ClothList fetchedClothList={clothService.getClothes()}/>
       </Route>
       <Route path={"/clothes/man"}>
-        <ClothList clothes={clothService.getClothesBySex("MAN")}/>
+        <ClothList fetchedClothList={clothService.getClothesBySex("MAN")}/>
       </Route>
       <Route path={"/clothes/woman"}>
-        <ClothList clothes={clothService.getClothesBySex("WOMAN")}/>
+        <ClothList fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
       </Route>
     </div>
   );

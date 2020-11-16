@@ -5,7 +5,7 @@ const ClothHeader = () => {
 
     return (
         <div>
-            <Link to="/clothes/">Clothes</Link>
+            <Link to="/clothes/all/">Clothes</Link>
             <Link to="/clothes/man/">Man's clothes</Link>
             <Link to="/clothes/woman/">Woman's clothes</Link>
         </div>

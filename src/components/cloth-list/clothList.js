@@ -10,23 +10,22 @@ import "./cloth-list.scss"
 class ClothList extends Component {
 
     componentDidMount() {
-        const {clothes, clothLoaded, clothRequested} = this.props
+        const {fetchedClothList, clothLoaded, clothRequested} = this.props
 
-        if (clothes.length !== 0) {
-            clothRequested()
+        clothRequested()
 
-            clothes.then(res => clothLoaded(res))
-        }
+        fetchedClothList.then(res => clothLoaded(res))
     }
 
     render() {
-        const {clothes} = this.props
+        const {clothes, loading} = this.props
 
-        if (clothes && clothes.length !== 0) {
-
+        if (loading) {
+            return <Spinner/>
+        }
             const renderClothList = clothes.map(item => {
                 return (
-                    <ClothItem clothItem={item}/>
+                    <ClothItem key={item.id} clothItem={item}/>
                 )
             })
             return (
@@ -35,12 +34,8 @@ class ClothList extends Component {
                 </ul>
                          
             )
-        } else {
-            return <h1>Empty</h1>
         }
     }
-
-}
 
 const mapStateToProps = (state) => {
     return {
