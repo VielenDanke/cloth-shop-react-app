@@ -22,7 +22,7 @@ class App extends Component {
         <Route path={"/clothes/woman"}>
           <ClothList fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
         </Route>
-        <CategoryList categoryService={categoryService}/>
+        <CategoryList categoryService={categoryService} clothService={clothService}/>
       </div>
     );
   }
