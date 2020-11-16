@@ -17,26 +17,24 @@ class ClothList extends Component {
         fetchedClothList.then(res => clothLoaded(res))
     }
 
-
     render() {
         const {clothes, loading} = this.props
 
         if (loading) {
             return <Spinner/>
         }
-            const renderClothList = clothes.map(item => {
-                return (
-                    <ClothItem key={item.id} clothItem={item}/>
-                )
-            })
+        const renderClothList = clothes.map(item => {
             return (
-                <ul className="cloth__list">
-                    {renderClothList}
-                </ul>
-                         
+                <ClothItem key={item.id} clothItem={item}/>
             )
-        }
+        })
+        return (
+            <ul className="cloth__list">
+                {renderClothList}
+            </ul>             
+        )
     }
+}
 
 const mapStateToProps = (state) => {
     return {

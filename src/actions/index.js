@@ -1,5 +1,4 @@
 const clothLoaded = (clothList) => {
-
     return {
         type: "CLOTH_LIST",
         payload: clothList
@@ -12,7 +11,15 @@ const clothRequested = () => {
     }
 }
 
+const categoryLoaded = (categories) => {
+    return {
+        type: "CATEGORY_LIST",
+        payload: categories
+    }
+}
+
 export {
     clothLoaded,
-    clothRequested
+    clothRequested,
+    categoryLoaded
 }
