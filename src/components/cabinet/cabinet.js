@@ -6,13 +6,14 @@ import Spinner from '../spinner'
 class Cabinet extends Component {
 
     state = {
-        user: null
+        user: null,
+        error: false
     }
 
     componentDidMount() {
         const {userService} = this.props
     
-        userService.getUserInSession("/cabinet", "GET", {"Authorization":localStorage.getItem(ACCESS_TOKEN)})
+        userService.getUserInSession("/cabinet", "GET", {"accessToken":localStorage.getItem(ACCESS_TOKEN)})
             .then(res => {
                 this.setState({
                     user: res
@@ -21,10 +22,14 @@ class Cabinet extends Component {
     }
 
     render() {
-        const {user} = this.state
+        const {user, error} = this.state
 
         if (!user) {
             return <Spinner/>
+        }
+
+        if (error) {
+            return <h1>Something went wrong</h1>
         }
 
         return (
