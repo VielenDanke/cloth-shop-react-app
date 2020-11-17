@@ -27,4 +27,19 @@ export default class UserService {
         }
         return res;
     }
+
+    getUserInSession = async (url, method, headers) => {
+        const searchingDefaultUrl = `${this._defaultUrl}${url}`
+
+        const res = await fetch(searchingDefaultUrl, {
+            method: method,
+            headers: headers
+        });
+    
+        if (!res.ok) {
+          throw new Error(`Could not fetch ${searchingDefaultUrl}` +
+            `, received ${res.status}`);
+        }
+        return await res.json();
+    }
 }
