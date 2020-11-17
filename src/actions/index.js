@@ -18,8 +18,17 @@ const categoryLoaded = (categories) => {
     }
 }
 
+const userLoaded = (token, roles) => {
+    return {
+        type: "USER_LOADED",
+        token: token,
+        roles: roles
+    }
+}
+
 export {
     clothLoaded,
     clothRequested,
-    categoryLoaded
+    categoryLoaded,
+    userLoaded
 }

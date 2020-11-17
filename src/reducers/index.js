@@ -1,7 +1,11 @@
+import {ACCESS_TOKEN, ROLES} from "../constants"
+
 const initialState = {
     clothes: [],
     loading: true,
-    categories: []
+    categories: [],
+    token: localStorage.getItem(ACCESS_TOKEN),
+    roles: localStorage.getItem(ROLES)
 }
 
 const reducer = (state = initialState, action) => {
@@ -23,6 +27,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 categories: action.payload
             }
+        case "USER_LOADED":
+            return {
+                ...state,
+                token: action.token,
+                roles: action.roles
+            }    
         default:
             return state 
     }

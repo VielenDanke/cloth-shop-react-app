@@ -4,11 +4,16 @@ import ClothList from "../cloth-list"
 import { Route } from 'react-router-dom'
 import WithClothService from "../hoc"
 import CategoryList from "../category-list"
+import LoginForm from "../login"
+import {connect} from 'react-redux'
+import Cabinet from '../cabinet'
 
 class App extends Component {
 
   render() {
-    const {clothService, categoryService} = this.props
+    const {clothService, categoryService, token, roles} = this.props
+
+    const loginForm = token && roles ? <Route path="/cabinet" component={Cabinet}/> : <Route path="/login" component={LoginForm}/>
 
     return (
       <div className="app">
@@ -27,9 +32,17 @@ class App extends Component {
         <Route path='/categories/:category' render={({match, location}) => {
             const {category} = match.params;
             return <ClothList pathVariable={location.pathname} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
+        {loginForm}
       </div>
     );
   }
 }
 
-export default WithClothService()(App)
+const mapStateToProps = (state) => {
+    return {
+      token: state.token,
+      roles: state.roles
+    }
+}
+
+export default WithClothService()(connect(mapStateToProps)(App))

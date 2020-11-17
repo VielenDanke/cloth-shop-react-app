@@ -6,8 +6,8 @@ const WithClothService = () => (Wrapped) => {
         return (
             <ClothServiceContext.Consumer>
                 {
-                    ({clothService, categoryService}) => {
-                        return <Wrapped {...props} clothService={clothService} categoryService={categoryService}/>
+                    ({clothService, categoryService, userService}) => {
+                        return <Wrapped {...props} userService={userService} clothService={clothService} categoryService={categoryService}/>
                     }
                 }
             </ClothServiceContext.Consumer>
