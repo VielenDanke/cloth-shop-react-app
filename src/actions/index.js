@@ -26,9 +26,25 @@ const userLoaded = (token, roles) => {
     }
 }
 
+const addClothToCart = (cloth) => {
+    return {
+        type: "CLOTH_TO_CART",
+        payload: cloth
+    }
+}
+
+const deleteClothFromCart = (clothId) => {
+    return {
+        type: "DELETE_CLOTH_FROM_CART",
+        payload: clothId
+    }
+}
+
 export {
     clothLoaded,
     clothRequested,
     categoryLoaded,
-    userLoaded
+    userLoaded,
+    addClothToCart,
+    deleteClothFromCart
 }

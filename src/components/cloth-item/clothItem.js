@@ -1,22 +1,89 @@
 import React, {Component} from 'react'
+import {connect} from "react-redux"
+import {addClothToCart} from "../../actions"
+import {Card, UncontrolledCarousel, CardText, CardBody,
+        CardTitle, CardSubtitle, Button, Dropdown, 
+        DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
 import "./cloth-list-item.scss"
 
 class ClothItem extends Component {
+
+    state = {
+        dropdownOpen: false
+    }
+
+    toggle = () => {
+        const {dropdownOpen} = this.state
+        this.setState({dropdownOpen: !dropdownOpen})
+    }
+
+    addClothToCart = (cloth) => {
+        const {addClothToCart} = this.props
+
+        addClothToCart(cloth)
+    }
+
     render() {
-        const {clothItem: {name, color, description, price}} = this.props
+        const {clothItem: {name, color, description, price, id, lineSizes, images}} = this.props
+        const {dropdownOpen} = this.state
+
+        console.log(images)
+
+        const imagesForRender = images.map((image, i) => {
+            ++i
+            return {
+                src: `C:/Users/viele/IdeaProjects/Files/${image}`,
+                altText: `Slide ${i}`,
+                caption: `Slide ${i}`,
+                header: `Slide ${i} Header`,
+                key: i
+            }
+        })
 
         return (
-            <li className="cloth__item">
-                <div className="cloth__title">{name}</div>
-                <img className="cloth__img" src="" alt="Cloth"></img>
-                <div className="cloth__category">Description: <span>{description}</span></div>
-                <div className="cloth__category">Color: <span>{color}</span></div>
-                <div className="cloth__price">Price: <span>{price} KZT</span></div>
-                <button className="cloth__btn">Add to cart</button>
+            <li>
+                <div>
+                    <Card>
+                        <CardBody>
+                            <CardTitle tag="h5">{name}</CardTitle>
+                            <CardSubtitle tag="h6" className="mb-2 text-muted">{color}</CardSubtitle>
+                        </CardBody>
+                        <UncontrolledCarousel autoPlay={false} items={imagesForRender} />
+                        <CardBody>
+                            <CardText>{price} KZT</CardText>
+                            <CardText>{description}</CardText>
+                            <Button onClick={() => addClothToCart({
+                                id
+                            })}>Add to cart</Button>
+                            <Dropdown direction="right" isOpen={dropdownOpen} toggle={this.toggle}>
+                            <DropdownToggle caret>
+                                Line sizes
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                {
+                                    lineSizes.map(item => {
+                                        return <DropdownItem key={item.age} toggle={false}>{item.amount}</DropdownItem>
+                                    })
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                        </CardBody>
+                    </Card>
+                </div>
             </li>
         )
     }
 }
 
-export default ClothItem
+const mapStateToProps = (state) => {
+    return {
+        cart: state.cart
+    }
+}
+
+const mapDispatchToProps = {
+    addClothToCart
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClothItem)

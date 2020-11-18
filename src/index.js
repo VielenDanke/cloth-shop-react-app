@@ -9,6 +9,7 @@ import CategoryService from "./services/categoryService"
 import UserService from "./services/userService"
 import {BrowserRouter as Router} from "react-router-dom"
 import App from './components/app'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 const clothService = new ClothService()
 const categoryService = new CategoryService()
