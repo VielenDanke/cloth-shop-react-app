@@ -45,7 +45,7 @@ class ClothItem extends Component {
                             <CardTitle tag="h5">{name}</CardTitle>
                             <CardSubtitle tag="h6" className="mb-2 text-muted">{color}</CardSubtitle>
                         </CardBody>
-                        <UncontrolledCarousel className="custom-tag" autoPlay={false} items={imagesForRender} />
+                        <UncontrolledCarousel className="image__list-item" autoPlay={false} items={imagesForRender} />
                         <CardBody>
                             <CardText>{price} KZT</CardText>
                             <CardText>{description}</CardText>

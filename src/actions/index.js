@@ -1,3 +1,5 @@
+import {ACCESS_TOKEN, ROLES} from "../constants"
+
 const clothLoaded = (clothList) => {
     return {
         type: "CLOTH_LIST",
@@ -40,11 +42,20 @@ const deleteClothFromCart = (clothId) => {
     }
 }
 
+const logout = () => {
+    localStorage.removeItem(ACCESS_TOKEN)
+    localStorage.removeItem(ROLES)
+    return {
+        type: "LOGOUT"
+    }
+}
+
 export {
     clothLoaded,
     clothRequested,
     categoryLoaded,
     userLoaded,
     addClothToCart,
-    deleteClothFromCart
+    deleteClothFromCart,
+    logout
 }
