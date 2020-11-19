@@ -5,7 +5,7 @@ import {Card, UncontrolledCarousel, CardText, CardBody,
         CardTitle, CardSubtitle, Button, Dropdown, 
         DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 
-import "./cloth-list-item.scss"
+import "./clothItem.css"
 
 class ClothItem extends Component {
 
@@ -33,23 +33,19 @@ class ClothItem extends Component {
         const imagesForRender = images.map((image, i) => {
             ++i
             return {
-                src: `C:/Users/viele/IdeaProjects/Files/${image}`,
-                altText: `Slide ${i}`,
-                caption: `Slide ${i}`,
-                header: `Slide ${i} Header`,
+                src: `data:image/jpeg;base64,${image}`,
                 key: i
             }
         })
 
         return (
-            <li>
                 <div>
                     <Card>
                         <CardBody>
                             <CardTitle tag="h5">{name}</CardTitle>
                             <CardSubtitle tag="h6" className="mb-2 text-muted">{color}</CardSubtitle>
                         </CardBody>
-                        <UncontrolledCarousel autoPlay={false} items={imagesForRender} />
+                        <UncontrolledCarousel className="custom-tag" autoPlay={false} items={imagesForRender} />
                         <CardBody>
                             <CardText>{price} KZT</CardText>
                             <CardText>{description}</CardText>
@@ -71,7 +67,6 @@ class ClothItem extends Component {
                         </CardBody>
                     </Card>
                 </div>
-            </li>
         )
     }
 }

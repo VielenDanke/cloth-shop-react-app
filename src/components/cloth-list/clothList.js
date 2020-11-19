@@ -1,11 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {clothLoaded, clothRequested} from "../../actions"
+import {ListGroup, ListGroupItem} from 'reactstrap'
 import WithClothService from "../hoc"
 import Spinner from "../spinner"
 import ClothItem from "../cloth-item"
-
-import "./cloth-list.scss"
 
 class ClothList extends Component {
 
@@ -35,13 +34,15 @@ class ClothList extends Component {
         }
         const renderClothList = clothes.map(item => {
             return (
-                <ClothItem key={item.id} clothItem={item}/>
+                <ListGroupItem>
+                    <ClothItem key={item.id} clothItem={item}/>
+                </ListGroupItem>
             )
         })
         return (
-            <ul className="cloth__list">
+            <ListGroup>
                 {renderClothList}
-            </ul>             
+            </ListGroup>       
         )
     }
 }
