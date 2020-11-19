@@ -73,9 +73,8 @@ const reducer = (state = initialState, action) => {
         case "LOGOUT":
             return {
                 ...state,
-                token: "",
-                roles: ""
-
+                token: action.token,
+                roles: action.roles
             }        
         default:
             return state 

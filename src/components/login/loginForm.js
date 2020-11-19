@@ -28,8 +28,6 @@ class LoginForm extends Component {
 
         const loginRequest = Object.assign({}, this.state)
 
-        console.log(loginRequest)
-
         userService.getConfigurableResource(
             "/auth/login", "POST", {"Content-Type":"application/json"}, loginRequest
             ).then(res => {
@@ -45,7 +43,7 @@ class LoginForm extends Component {
                     throw new Error("Token or Roles is not defined")
                 }
             }).catch(reason => {
-                console.log(reason)
+                
             })
     }
 

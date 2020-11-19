@@ -34,8 +34,8 @@ class ClothList extends Component {
         }
         const renderClothList = clothes.map(item => {
             return (
-                <ListGroupItem>
-                    <ClothItem key={item.id} clothItem={item}/>
+                <ListGroupItem key={item.id}>
+                        <ClothItem clothItem={item}/>
                 </ListGroupItem>
             )
         })

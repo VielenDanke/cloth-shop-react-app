@@ -1,45 +1,87 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {Link, Redirect, Route} from 'react-router-dom';
 import {connect} from 'react-redux'
-import {logout} from "../../actions"
-import { Navbar, NavbarBrand, NavItem, NavLink, Nav, Button } from 'reactstrap';
+import {logout, categoryLoaded} from "../../actions"
+import { Navbar, NavbarBrand, NavItem, NavLink, Nav, UncontrolledDropdown,
+    DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 
-const ClothHeader = ({token, roles, logout}) => {
-    const loginCabinetComponent = token && roles ? <Link to="/cabinet/">Cabinet</Link> : <Link to="/login/">Login</Link>
+class ClothHeader extends Component {
 
-    return (
-        <Navbar color="light" light expand="lg">
-            <NavbarBrand href="/">Minimo Shop</NavbarBrand>
-            <Nav className="mr-auto" navbar>
-                <NavItem>
-                <NavLink href="/clothes/all/">Clothes</NavLink>
-                </NavItem>
-                <NavItem>
-                <NavLink href="/clothes/man/">Man's clothes</NavLink>
-                </NavItem>
-                <NavItem>
-                <NavLink href="/clothes/woman/">Woman's clothes</NavLink>
-                </NavItem>
-                
-                <Route exact path="/logout">
-                    <Redirect to="/"/>
-                </Route>
-            </Nav>
-            {token && roles ? <Button outline color="primary"><Link to="/logout/" onClick={logout}>Logout</Link></Button> : null}
-            <Button outline color="primary">{loginCabinetComponent}</Button>
-        </Navbar>
-    )
+    componentDidMount() {
+        const {categoryLoaded, categoryService} = this.props
+
+        categoryService.getAllCategories()
+            .then(res => categoryLoaded(res))
+    }
+
+    render() {
+        const {token, roles, categories} = this.props
+
+        const loginCabinetComponent = token && roles ? 
+                                    <Link to="/cabinet/">Cabinet</Link> : 
+                                    <Link to="/login/">Login</Link>
+
+        return (
+            <Navbar color="light" light expand="lg">
+                <NavbarBrand href="/">Minimo Shop</NavbarBrand>
+                <Nav className="mr-auto" navbar>
+                    <NavItem>
+                        <UncontrolledDropdown nav inNavbar>
+                            <DropdownToggle nav caret>
+                                Men's clothes
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                                {
+                                    categories.map(item => {
+                                        return (
+                                            <DropdownItem key={item.id}>
+                                                <NavLink href={`/clothes/man/${item.category}/`}>{item.category}</NavLink>
+                                            </DropdownItem>
+                                        )
+                                    })
+                                }
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
+                    </NavItem>
+                    <NavItem>
+                        <UncontrolledDropdown nav inNavbar>
+                            <DropdownToggle nav caret>
+                                Woman's clothes
+                            </DropdownToggle>
+                            <DropdownMenu right>
+                                {
+                                    categories.map(item => {
+                                        return (
+                                            <DropdownItem key={item.id}>
+                                                <NavLink href={`/clothes/woman/${item.category}/`}>{item.category}</NavLink>
+                                            </DropdownItem>
+                                        )
+                                    })
+                                }
+                            </DropdownMenu>
+                        </UncontrolledDropdown>
+                    </NavItem>
+                    <Route exact path="/logout">
+                        <Redirect to="/"/>
+                    </Route>
+                </Nav>
+                {token && roles ? <Link to="/logout/" onClick={logout}>Logout</Link> : null}
+                {loginCabinetComponent}
+            </Navbar>
+        )
+   }
 }
 
 const mapStateToProps = (state) => {
     return {
         token: state.token,
-        roles: state.roles
+        roles: state.roles,
+        categories: state.categories
     }
 }
 
 const mapDispatchToProps ={
-    logout
+    logout, categoryLoaded
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ClothHeader)

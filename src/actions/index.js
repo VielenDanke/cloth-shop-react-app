@@ -46,7 +46,9 @@ const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN)
     localStorage.removeItem(ROLES)
     return {
-        type: "LOGOUT"
+        type: "LOGOUT",
+        token: "",
+        roles: ""
     }
 }
 

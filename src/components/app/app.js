@@ -3,7 +3,6 @@ import ClothHeader from "../cloth-header"
 import ClothList from "../cloth-list"
 import { Route } from 'react-router-dom'
 import WithClothService from "../hoc"
-import CategoryList from "../category-list"
 import LoginForm from "../login"
 import {connect} from 'react-redux'
 import Cabinet from '../cabinet'
@@ -17,21 +16,17 @@ class App extends Component {
 
     return (
       <div className="app">
-        <ClothHeader/>
-        <CategoryList categoryService={categoryService} clothService={clothService}/>
-        <Route path="/clothes/all" exact render={({location}) => {
-          return <ClothList pathVariable={location.pathname} fetchedClothList={clothService.getClothes()}/>
-        }}/>
-        <Route path="/clothes/man" exact render={({location}) => {
+        <ClothHeader categoryService={categoryService} clothService={clothService}/>
+        <Route path="/clothes/man/:category" render={({match, location}) => {
+          const {category} = match.params
           return <ClothList pathVariable={location.pathname} 
-          fetchedClothList={clothService.getClothesBySex("MAN")}/>
+          fetchedClothList={clothService.getClothesByCategoryAndSex("MAN", category)}/>
         }}/>
-        <Route path="/clothes/woman" exact render={({location}) => {
-          return <ClothList pathVariable={location.pathname}  fetchedClothList={clothService.getClothesBySex("WOMAN")}/>
+        <Route path="/clothes/woman/:category" render={({match, location}) => {
+          const {category} = match.params
+          return <ClothList pathVariable={location.pathname}  
+          fetchedClothList={clothService.getClothesByCategoryAndSex("WOMAN", category)}/>
         }}/>
-        <Route path='/categories/:category' render={({match, location}) => {
-            const {category} = match.params;
-            return <ClothList pathVariable={location.pathname} fetchedClothList={clothService.getClothesByCategory(category)}/>}}/>
         {loginForm}
       </div>
     );

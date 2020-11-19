@@ -47,4 +47,12 @@ export default class ClothService {
             {category: category} 
         )
     }
+
+    getClothesByCategoryAndSex = async (sex, category) => {
+        return await this.getSearchingResource(
+            "POST",
+            {"Content-Type":"application/json"},
+            {category: category, sex: sex}
+        )
+    }
 }
