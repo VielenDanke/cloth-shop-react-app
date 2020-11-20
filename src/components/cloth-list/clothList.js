@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {clothLoaded, clothRequested} from "../../actions"
-import {ListGroup, ListGroupItem} from 'reactstrap'
+import {ListGroup, ListGroupItem, Spinner} from 'reactstrap'
 import WithClothService from "../hoc"
-import Spinner from "../spinner"
 import ClothItem from "../cloth-item"
+
+import "./clothList.css"
 
 class ClothList extends Component {
 
@@ -30,7 +31,7 @@ class ClothList extends Component {
         const {clothes, loading} = this.props
 
         if (loading) {
-            return <Spinner/>
+            return <Spinner className="spinner__cloth-list"/>
         }
         const renderClothList = clothes.map(item => {
             return (

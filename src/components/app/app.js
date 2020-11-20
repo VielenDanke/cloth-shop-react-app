@@ -16,9 +16,7 @@ class App extends Component {
     const loginForm = token && roles ? 
       <div>
         <Route path="/cabinet" component={Cabinet}/>
-        <Route exact path="/logout">
-          <Redirect to="/"/>
-        </Route>
+        <Redirect from="/logout/" to="/" exact/>
       </div> : 
       <Route path="/login" component={LoginForm}/>
 

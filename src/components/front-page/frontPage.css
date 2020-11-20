@@ -1,0 +1,11 @@
+.carousel__promotion {
+    text-align: center;
+    max-width: 800px;
+    max-height: 800px;
+    background: black;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    margin-bottom: auto;
+}

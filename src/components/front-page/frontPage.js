@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import { UncontrolledCarousel } from 'reactstrap';
+import { Spinner, UncontrolledCarousel } from 'reactstrap';
+import "./frontPage.css"
 
 class FrontPage extends Component {
 
@@ -19,19 +20,22 @@ class FrontPage extends Component {
     render() {
         const {promotions} = this.state
 
-        console.log(promotions)
+        if (!promotions || promotions.length === 0) {
+            return <Spinner/>
+        }
 
         const mappedPromotions = promotions.map((item, i) => {
             return {
                 src: `data:image/jpeg;base64,${item.image}`,
                 caption: `${item.description}`,
                 header: `${item.name}`,
+                altText: `${item.name}`,
                 key: ++i
             }
         })
 
         return (
-            <UncontrolledCarousel items={mappedPromotions}/>
+            <UncontrolledCarousel className="carousel__promotion" items={mappedPromotions}/>
         )
     }
 }
