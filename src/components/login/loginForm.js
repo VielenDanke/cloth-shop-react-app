@@ -42,8 +42,6 @@ class LoginForm extends Component {
                 } else {
                     throw new Error("Token or Roles is not defined")
                 }
-            }).catch(reason => {
-                
             })
     }
 
@@ -55,7 +53,7 @@ class LoginForm extends Component {
                     className="form-control" 
                     placeholder="Email"
                     onChange={this.handleInputChanges} 
-                    value={this.state.email}/>
+                    value={this.state.username}/>
                 <input type="password" 
                     name="password" 
                     className="form-control" 

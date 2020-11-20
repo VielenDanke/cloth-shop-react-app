@@ -32,6 +32,10 @@ export default class ClothService {
         return await this.getResource("/clothes")
     }
 
+    getPromotions = async () => {
+        return await this.getResource("/promotions")
+    }
+
     getClothesBySex = async (sex) => {
         return await this.getSearchingResource(
             "POST",

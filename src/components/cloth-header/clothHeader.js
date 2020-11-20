@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Link, Redirect, Route} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {connect} from 'react-redux'
 import {logout, categoryLoaded} from "../../actions"
 import { Navbar, NavbarBrand, NavItem, NavLink, Nav, UncontrolledDropdown,
@@ -15,11 +15,14 @@ class ClothHeader extends Component {
     }
 
     render() {
-        const {token, roles, categories} = this.props
+        const {token, roles, categories, logout} = this.props
 
-        const loginCabinetComponent = token && roles ? 
-                                    <Link to="/cabinet/">Cabinet</Link> : 
-                                    <Link to="/login/">Login</Link>
+        const loginLogoutCabinetComponent = token && roles ? 
+            <div>
+                <Link to="/cabinet/">Cabinet</Link>
+                <Link to="/logout/" onClick={logout}>Logout</Link>
+            </div> : 
+            <Link to="/login/">Login</Link>
 
         return (
             <Navbar color="light" light expand="lg">
@@ -61,12 +64,8 @@ class ClothHeader extends Component {
                             </DropdownMenu>
                         </UncontrolledDropdown>
                     </NavItem>
-                    <Route exact path="/logout">
-                        <Redirect to="/"/>
-                    </Route>
                 </Nav>
-                {token && roles ? <Link to="/logout/" onClick={logout}>Logout</Link> : null}
-                {loginCabinetComponent}
+                {loginLogoutCabinetComponent}
             </Navbar>
         )
    }
