@@ -12,8 +12,8 @@ export default class ClothService {
         return await res.json();
     }
     
-    getSearchingResource = async (method, headers, body) => {
-        const searchingDefaultUrl = `${this._defaultUrl}/clothes/searching`
+    performRequest = async (method, headers, body, url = "/clothes/searching") => {
+        const searchingDefaultUrl = `${this._defaultUrl}${url}`
 
         const res = await fetch(searchingDefaultUrl, {
             method: method,
@@ -37,7 +37,7 @@ export default class ClothService {
     }
 
     getClothesBySex = async (sex) => {
-        return await this.getSearchingResource(
+        return await this.performRequest(
             "POST",
             {"Content-Type":"application/json"},
             {sex: sex} 
@@ -45,7 +45,7 @@ export default class ClothService {
     }
 
     getClothesByCategory = async (category) => {
-        return await this.getSearchingResource(
+        return await this.performRequest(
             "POST",
             {"Content-Type":"application/json"},
             {category: category} 
@@ -53,7 +53,7 @@ export default class ClothService {
     }
 
     getClothesByCategoryAndSex = async (sex, category) => {
-        return await this.getSearchingResource(
+        return await this.performRequest(
             "POST",
             {"Content-Type":"application/json"},
             {category: category, sex: sex}

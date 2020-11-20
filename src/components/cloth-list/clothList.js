@@ -30,6 +30,8 @@ class ClothList extends Component {
     render() {
         const {clothes, loading} = this.props
 
+        console.log(clothes)
+
         if (loading) {
             return <Spinner className="spinner__cloth-list"/>
         }
