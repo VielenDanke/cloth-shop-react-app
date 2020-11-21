@@ -11,8 +11,10 @@ class Cabinet extends Component {
         error: false,
         promotionName: "",
         promotionDescription: "",
-        promotionId: ""
+        promotionId: null,
+        promotionFileImage: null
     }
+    
 
     componentDidMount() {
         const {userService} = this.props
@@ -35,6 +37,14 @@ class Cabinet extends Component {
         })
     }
 
+    handleFileChanges = (event) => {
+        const target = event.target
+
+        this.setState({
+            promotionFileImage: target.files[0]
+        })
+    }
+
     handleSubmit = (event) => {
         event.preventDefault()
 
@@ -51,9 +61,31 @@ class Cabinet extends Component {
             {"Content-Type":"application/json", "accessToken":localStorage.getItem(ACCESS_TOKEN)}, 
             promotionSaveRequest, "/promotions"
         ).then(res => {
-            console.log(res)
             this.setState({
                 promotionId: res.id
+            })
+        })
+    }
+
+    onFilePromotionSubmit = (event) => {
+        event.preventDefault()
+
+        const {promotionId, promotionFileImage} = this.state
+        const {clothService, token} = this.props
+
+        const formData = new FormData()
+        formData.append("image", promotionFileImage)
+
+        clothService.performFileRequestSaving(
+            `/promotions/${promotionId}/file`, 
+            formData,
+            {"accessToken":token}
+        ).then(res => {
+            this.setState({
+                promotionId: null,
+                promotionFileImage: null,
+                promotionName: "",
+                promotionDescription: ""
             })
         })
     }
@@ -85,14 +117,24 @@ class Cabinet extends Component {
 
     renderPromotionIdComponent = (promotionId) => {
         if (promotionId) {
-
+            return (
+                <form onSubmit={this.onFilePromotionSubmit}>
+                    <input type="file"
+                    name="file"
+                    className="form-control"
+                    placeholder="Upload file"
+                    onChange={this.handleFileChanges}
+                    />
+                    <button type="submit">Upload file</button>
+                </form>
+            )
         } else {
             return
         }
     }
 
     render() {
-        const {user, error} = this.state
+        const {user, error, promotionId} = this.state
         const {roles} = this.props
 
         if (!user) {
@@ -106,7 +148,8 @@ class Cabinet extends Component {
         return (
             <div>
                 <h1>Hello, {user.username}</h1>
-                {this.renderComponentDependsOnRole(roles)}        
+                {this.renderComponentDependsOnRole(roles)}    
+                {this.renderPromotionIdComponent(promotionId)}    
             </div>
         )
     }
@@ -114,7 +157,8 @@ class Cabinet extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        roles: state.roles
+        roles: state.roles,
+        token: state.token
     }
 }
 

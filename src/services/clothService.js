@@ -28,6 +28,23 @@ export default class ClothService {
         return await res.json();
     }
 
+    performFileRequestSaving = async (url, file, headers) => {
+        const finalUrl = `${this._defaultUrl}${url}`
+
+        const res = await fetch(finalUrl, {
+            method: "POST",
+            body: file,
+            headers: headers
+        })
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${finalUrl}` +
+              `, received ${res.status}`);
+          }
+
+        return res
+    }
+
     getClothes = async () => {
         return await this.getResource("/clothes")
     }
