@@ -52,6 +52,20 @@ const logout = () => {
     }
 }
 
+const promotionUploaded = (promotions) => {
+    return {
+        type: "PROMOTION_UPLOADED",
+        payload: promotions
+    }
+}
+
+const addPromotion = (promotion) => {
+    return {
+        type: "ADD_PROMOTION",
+        payload: promotion
+    }
+}
+
 export {
     clothLoaded,
     clothRequested,
@@ -59,5 +73,7 @@ export {
     userLoaded,
     addClothToCart,
     deleteClothFromCart,
-    logout
+    logout,
+    promotionUploaded,
+    addPromotion
 }

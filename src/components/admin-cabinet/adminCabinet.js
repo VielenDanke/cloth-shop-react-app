@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import WithClothService from '../hoc'
-import {ACCESS_TOKEN} from "../../constants"
 import Spinner from '../spinner'
 import {connect} from 'react-redux'
+import { ListGroup, ListGroupItem } from 'reactstrap'
+import {addPromotion, promotionUploaded} from "../../actions"
 
 class AdminCabinet extends Component {
 
@@ -11,20 +12,20 @@ class AdminCabinet extends Component {
         error: false,
         promotionName: "",
         promotionDescription: "",
-        promotionId: null,
+        promotionId: "",
         promotionFileImage: null
     }
-    
 
     componentDidMount() {
-        const {userService} = this.props
-    
-        userService.getUserInSession("/cabinet", "GET", {"accessToken":localStorage.getItem(ACCESS_TOKEN)})
+        const {userService, token} = this.props
+
+        userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
             .then(res => {
                 this.setState({
                     user: res
                 })
             })
+        
     }
 
     handleInputChanges = (event) => {
@@ -45,55 +46,51 @@ class AdminCabinet extends Component {
         })
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault()
+    performPromotionSaving = () => {
+        const {promotionName, promotionDescription, promotionFileImage} = this.state
 
-        const {promotionName, promotionDescription} = this.state
-        const {clothService} = this.props
+        if (promotionName && promotionDescription && promotionFileImage && 
+            promotionName.length > 0 && promotionDescription.length > 0) {
+                const {clothService, token, addPromotion} = this.props
+                
+                const promotionSaveRequest = {
+                    name: promotionName,
+                    description: promotionDescription
+                }
+                
+                clothService.performRequest(
+                    "POST", 
+                    {"Content-Type":"application/json", "accessToken":token}, 
+                    promotionSaveRequest, "/promotions"
+                ).then(res => {
+                    const id = res.id
 
-        const promotionSaveRequest = {
-            name: promotionName,
-            description: promotionDescription
+                    const formData = new FormData()
+                    formData.append("image", promotionFileImage)
+
+                    return clothService.performFileRequestSaving(
+                        `/promotions/${id}/file`, 
+                        formData,
+                        {"accessToken":token}
+                    )
+                })
+                .then(res => res.json())
+                .then(res => {
+                    addPromotion(res)
+                    this.setState({
+                        promotionId: "",
+                        promotionFileImage: null,
+                        promotionName: "",
+                        promotionDescription: ""
+                    })
+                })
         }
-        
-        clothService.performRequest(
-            "POST", 
-            {"Content-Type":"application/json", "accessToken":localStorage.getItem(ACCESS_TOKEN)}, 
-            promotionSaveRequest, "/promotions"
-        ).then(res => {
-            this.setState({
-                promotionId: res.id
-            })
-        })
-    }
-
-    onFilePromotionSubmit = (event) => {
-        event.preventDefault()
-
-        const {promotionId, promotionFileImage} = this.state
-        const {clothService, token} = this.props
-
-        const formData = new FormData()
-        formData.append("image", promotionFileImage)
-
-        clothService.performFileRequestSaving(
-            `/promotions/${promotionId}/file`, 
-            formData,
-            {"accessToken":token}
-        ).then(res => {
-            this.setState({
-                promotionId: null,
-                promotionFileImage: null,
-                promotionName: "",
-                promotionDescription: ""
-            })
-        })
     }
 
     renderComponentDependsOnRole = (role) => {
         if (role === "ROLE_ADMIN") {
             return (
-                <form onSubmit={this.handleSubmit}>
+                <div>
                     <input type="text" 
                         name="promotionName" 
                         className="form-control" 
@@ -107,35 +104,37 @@ class AdminCabinet extends Component {
                         onChange={this.handleInputChanges} 
                         value={this.state.promotionDescription}
                         />
-                    <button type="submit">Create Promotion</button>
-                </form>                    
+                    <input type="file"
+                        name="file"
+                        className="form-control"
+                        placeholder="Upload file"
+                        onChange={this.handleFileChanges}
+                        />
+                    <button className="btn btn-primary" 
+                        onClick={this.performPromotionSaving}>Upload new promotion</button>
+                </div>
             )
         } else {
             return
         }
     }
 
-    renderPromotionIdComponent = (promotionId) => {
-        if (promotionId) {
-            return (
-                <form onSubmit={this.onFilePromotionSubmit}>
-                    <input type="file"
-                    name="file"
-                    className="form-control"
-                    placeholder="Upload file"
-                    onChange={this.handleFileChanges}
-                    />
-                    <button type="submit">Upload file</button>
-                </form>
-            )
-        } else {
-            return
-        }
+    deletePromotion = (id) => {
+        console.log(`Delete ${id}`)
     }
 
     render() {
-        const {user, error, promotionId} = this.state
-        const {roles} = this.props
+        const {user, error} = this.state
+        const {roles, promotions} = this.props
+
+        const promotionListGroupItems = promotions.map(prom => {
+            return (
+                <ListGroupItem key={prom.id}>
+                    {prom.name}
+                    <button onClick={() => this.deletePromotion(prom.id)}>Delete {prom.name}?</button>
+                </ListGroupItem>
+            )
+        })
 
         if (!user) {
             return <Spinner/>
@@ -148,8 +147,10 @@ class AdminCabinet extends Component {
         return (
             <div>
                 <h1>Hello, {user.username}</h1>
-                {this.renderComponentDependsOnRole(roles)}    
-                {this.renderPromotionIdComponent(promotionId)}    
+                {this.renderComponentDependsOnRole(roles)}  
+                <ListGroup>
+                    {promotionListGroupItems}
+                </ListGroup>  
             </div>
         )
     }
@@ -158,8 +159,13 @@ class AdminCabinet extends Component {
 const mapStateToProps = (state) => {
     return {
         roles: state.roles,
-        token: state.token
+        token: state.token,
+        promotions: state.promotions
     }
 }
 
-export default WithClothService()(connect(mapStateToProps)(AdminCabinet))
+const mapDispatchToProps = {
+    addPromotion, promotionUploaded
+}
+
+export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(AdminCabinet))

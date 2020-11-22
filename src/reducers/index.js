@@ -1,12 +1,11 @@
-import {ACCESS_TOKEN, ROLES} from "../constants"
-
 const initialState = {
     clothes: [],
     loading: true,
     categories: [],
-    token: localStorage.getItem(ACCESS_TOKEN),
-    roles: localStorage.getItem(ROLES),
-    cart: []
+    token: "",
+    roles: "",
+    cart: [],
+    promotions: []
 }
 
 const reducer = (state = initialState, action) => {
@@ -75,7 +74,21 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 token: action.token,
                 roles: action.roles
-            }        
+            } 
+        case "PROMOTION_UPLOADED":
+            return {
+                ...state,
+                promotions: action.payload
+            }   
+        case "ADD_PROMOTION":
+            const promotion = action.payload
+
+            const newPromArray = [...state.promotions, promotion]
+
+            return {
+                ...state,
+                promotions: newPromArray
+            }            
         default:
             return state 
     }

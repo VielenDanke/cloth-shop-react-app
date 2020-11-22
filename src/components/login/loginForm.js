@@ -37,8 +37,6 @@ class LoginForm extends Component {
 
                 if (accessTokenHeader && rolesHeader) {
                     userLoaded(accessTokenHeader, rolesHeader)
-                    localStorage.setItem(ACCESS_TOKEN, accessTokenHeader)
-                    localStorage.setItem(ROLES, rolesHeader)
                 } else {
                     throw new Error("Token or Roles is not defined")
                 }
