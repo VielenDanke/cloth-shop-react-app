@@ -19,7 +19,8 @@ class ClothHeader extends Component {
 
         const loginLogoutCabinetComponent = token && roles ? 
             <div>
-                <Link to="/cabinet/">Cabinet</Link>
+                {roles === "ROLE_ADMIN" ? <Link to="/cabinet/admin/">Cabinet</Link> : null}
+                {roles === "ROLE_USER" ? <Link to="/cabinet/user">Cabinet</Link> : null}
                 <Link to="/logout/" onClick={logout}>Logout</Link>
             </div> : 
             <Link to="/login/">Login</Link>

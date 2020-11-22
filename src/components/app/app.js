@@ -5,7 +5,8 @@ import { Route, Redirect } from 'react-router-dom'
 import WithClothService from "../hoc"
 import LoginForm from "../login"
 import {connect} from 'react-redux'
-import Cabinet from '../cabinet'
+import AdminCabinet from '../admin-cabinet'
+import UserCabinet from "../user-cabinet"
 import FrontPage from "../front-page"
 
 class App extends Component {
@@ -15,7 +16,8 @@ class App extends Component {
 
     const loginForm = token && roles ? 
       <div>
-        <Route path="/cabinet" component={Cabinet}/>
+        <Route path="/cabinet/admin" component={AdminCabinet}/>
+        <Route path="/cabinet/user" component={UserCabinet}/>
         <Route path="/logout">
           <Redirect to="/" exact/>
         </Route>

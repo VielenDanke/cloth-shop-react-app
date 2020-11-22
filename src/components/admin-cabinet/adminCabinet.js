@@ -4,7 +4,7 @@ import {ACCESS_TOKEN} from "../../constants"
 import Spinner from '../spinner'
 import {connect} from 'react-redux'
 
-class Cabinet extends Component {
+class AdminCabinet extends Component {
 
     state = {
         user: null,
@@ -162,4 +162,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default WithClothService()(connect(mapStateToProps)(Cabinet))
+export default WithClothService()(connect(mapStateToProps)(AdminCabinet))
