@@ -66,6 +66,13 @@ const addPromotion = (promotion) => {
     }
 }
 
+const deletePromotion = (id) => {
+    return {
+        type: "DELETE_PROMOTION",
+        payload: id
+    }
+}
+
 export {
     clothLoaded,
     clothRequested,
@@ -75,5 +82,6 @@ export {
     deleteClothFromCart,
     logout,
     promotionUploaded,
-    addPromotion
+    addPromotion,
+    deletePromotion
 }

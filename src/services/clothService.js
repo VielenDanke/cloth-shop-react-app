@@ -45,6 +45,15 @@ export default class ClothService {
         return res
     }
 
+    performDeleteRequest = async (url, headers) => {
+        const finalUrl = `${this._defaultUrl}${url}`
+
+        return await fetch(finalUrl, {
+            method: "DELETE",
+            headers: headers
+        })
+    }
+
     getClothes = async () => {
         return await this.getResource("/clothes")
     }

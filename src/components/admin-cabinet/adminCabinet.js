@@ -3,7 +3,7 @@ import WithClothService from '../hoc'
 import Spinner from '../spinner'
 import {connect} from 'react-redux'
 import { ListGroup, ListGroupItem } from 'reactstrap'
-import {addPromotion, promotionUploaded} from "../../actions"
+import {addPromotion, promotionUploaded, deletePromotion} from "../../actions"
 
 class AdminCabinet extends Component {
 
@@ -87,7 +87,7 @@ class AdminCabinet extends Component {
         }
     }
 
-    renderComponentDependsOnRole = (role) => {
+    renderPromotionUploadComponent = (role) => {
         if (role === "ROLE_ADMIN") {
             return (
                 <div>
@@ -120,7 +120,14 @@ class AdminCabinet extends Component {
     }
 
     deletePromotion = (id) => {
-        console.log(`Delete ${id}`)
+        const {clothService, token, deletePromotion} = this.props
+
+        clothService.performDeleteRequest(`/promotions/${id}`, {"accessToken":token})
+            .then(res => {
+                if (res.ok) {
+                    deletePromotion(id)
+                }
+            })
     }
 
     render() {
@@ -147,7 +154,7 @@ class AdminCabinet extends Component {
         return (
             <div>
                 <h1>Hello, {user.username}</h1>
-                {this.renderComponentDependsOnRole(roles)}  
+                {this.renderPromotionUploadComponent(roles)}  
                 <ListGroup>
                     {promotionListGroupItems}
                 </ListGroup>  
@@ -165,7 +172,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-    addPromotion, promotionUploaded
+    addPromotion, promotionUploaded, deletePromotion
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(AdminCabinet))

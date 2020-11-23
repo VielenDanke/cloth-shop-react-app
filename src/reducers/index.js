@@ -64,7 +64,7 @@ const reducer = (state = initialState, action) => {
             }
             return {
                 ...state,
-                items: [
+                promotions: [
                     ...state.cart.slice(0, itemIndex),
                     ...state.cart.slice(itemIndex + 1)
                 ]
@@ -88,7 +88,19 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 promotions: newPromArray
-            }            
+            }     
+        case "DELETE_PROMOTION":
+            const promotionId = action.payload
+            
+            const promotionIndex = state.promotions.findIndex(prom => prom.id === promotionId)
+           
+            return {
+                ...state,
+                promotions: [
+                    ...state.promotions.slice(0, promotionIndex),
+                    ...state.promotions.slice(promotionIndex + 1)
+                ]
+            }   
         default:
             return state 
     }
