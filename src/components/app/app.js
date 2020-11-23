@@ -8,6 +8,7 @@ import {connect} from 'react-redux'
 import AdminCabinet from '../admin-cabinet'
 import UserCabinet from "../user-cabinet"
 import FrontPage from "../front-page"
+import RegistrationForm from "../registration-form"
 
 class App extends Component {
 
@@ -22,7 +23,10 @@ class App extends Component {
           <Redirect to="/" exact/>
         </Route>
       </div> : 
-      <Route path="/login" component={LoginForm}/>
+      <div>
+        <Route path="/login" component={LoginForm}/>
+        <Route path="/registration" component={RegistrationForm}/>
+      </div>
 
     return (
       <div className="app">

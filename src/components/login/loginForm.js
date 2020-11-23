@@ -26,8 +26,12 @@ class LoginForm extends Component {
         event.preventDefault()
 
         const {userService, userLoaded} = this.props
+        const {username, password} = this.state
 
-        const loginRequest = Object.assign({}, this.state)
+        const loginRequest = {
+            username: username,
+            password: password
+        }
 
         userService.getConfigurableResource(
             "/auth/login", "POST", {"Content-Type":"application/json"}, loginRequest
