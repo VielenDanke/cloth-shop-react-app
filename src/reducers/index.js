@@ -103,14 +103,9 @@ const reducer = (state = initialState, action) => {
             }   
         case "DELETE_CLOTH":
             const clothIdToDelete = action.payload
-            
+
             const clothIndex = state.clothes.findIndex(item => item.id === clothIdToDelete)
 
-            if (!clothIndex) {
-                return {
-                    ...state
-                }
-            }
             return {
                 ...state,
                 clothes: [
