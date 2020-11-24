@@ -64,7 +64,7 @@ const reducer = (state = initialState, action) => {
             }
             return {
                 ...state,
-                promotions: [
+                cart: [
                     ...state.cart.slice(0, itemIndex),
                     ...state.cart.slice(itemIndex + 1)
                 ]
@@ -99,6 +99,23 @@ const reducer = (state = initialState, action) => {
                 promotions: [
                     ...state.promotions.slice(0, promotionIndex),
                     ...state.promotions.slice(promotionIndex + 1)
+                ]
+            }   
+        case "DELETE_CLOTH":
+            const clothIdToDelete = action.payload
+            
+            const clothIndex = state.clothes.findIndex(item => item.id === clothIdToDelete)
+
+            if (!clothIndex) {
+                return {
+                    ...state
+                }
+            }
+            return {
+                ...state,
+                clothes: [
+                    ...state.clothes.slice(0, clothIndex),
+                    ...state.clothes.slice(clothIndex + 1)
                 ]
             }   
         default:
