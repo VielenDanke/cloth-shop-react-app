@@ -3,13 +3,13 @@ import WithClothService from '../hoc'
 import Spinner from '../spinner'
 import {connect} from 'react-redux'
 import { ListGroup, ListGroupItem } from 'reactstrap'
-import {addPromotion, promotionUploaded, deletePromotion} from "../../actions"
 
 class AdminCabinet extends Component {
 
     state = {
         user: null,
         error: false,
+        promotions: [],
         promotionName: "",
         promotionDescription: "",
         promotionId: "",
@@ -17,7 +17,7 @@ class AdminCabinet extends Component {
     }
 
     componentDidMount() {
-        const {userService, token} = this.props
+        const {userService, token, clothService} = this.props
 
         userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
             .then(res => {
@@ -25,7 +25,21 @@ class AdminCabinet extends Component {
                     user: res
                 })
             })
-        
+        clothService.getPromotions()
+            .then(res => {
+                this.setState({promotions: res})
+            })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const {clothService} = this.props
+
+        if (prevState.promotions.length !== this.state.promotions.length) {
+            clothService.getPromotions()
+            .then(res => {
+                this.setState({promotions: res})
+            })
+        }
     }
 
     handleInputChanges = (event) => {
@@ -46,12 +60,14 @@ class AdminCabinet extends Component {
         })
     }
 
-    performPromotionSaving = () => {
-        const {promotionName, promotionDescription, promotionFileImage} = this.state
+    performPromotionSaving = (event) => {
+        event.preventDefault()
+
+        const {promotionName, promotionDescription, promotionFileImage, promotions} = this.state
 
         if (promotionName && promotionDescription && promotionFileImage && 
             promotionName.length > 0 && promotionDescription.length > 0) {
-                const {clothService, token, addPromotion} = this.props
+                const {clothService, token} = this.props
                 
                 const promotionSaveRequest = {
                     name: promotionName,
@@ -76,12 +92,12 @@ class AdminCabinet extends Component {
                 })
                 .then(res => res.json())
                 .then(res => {
-                    addPromotion(res)
+                    event.target.reset()
                     this.setState({
-                        promotionId: "",
-                        promotionFileImage: null,
-                        promotionName: "",
-                        promotionDescription: ""
+                        promotions: [
+                            ...promotions,
+                            res
+                        ]
                     })
                 })
         }
@@ -91,27 +107,28 @@ class AdminCabinet extends Component {
         if (role === "ROLE_ADMIN") {
             return (
                 <div>
-                    <input type="text" 
-                        name="promotionName" 
-                        className="form-control" 
-                        placeholder="Promotion Name"
-                        onChange={this.handleInputChanges} 
-                        value={this.state.promotionName}/>
-                    <input type="text" 
-                        name="promotionDescription" 
-                        className="form-control" 
-                        placeholder="Promotion Description" 
-                        onChange={this.handleInputChanges} 
-                        value={this.state.promotionDescription}
-                        />
-                    <input type="file"
-                        name="file"
-                        className="form-control"
-                        placeholder="Upload file"
-                        onChange={this.handleFileChanges}
-                        />
-                    <button className="btn btn-primary" 
-                        onClick={this.performPromotionSaving}>Upload new promotion</button>
+                    <form onSubmit={this.performPromotionSaving}>
+                        <input type="text" 
+                            name="promotionName" 
+                            className="form-control" 
+                            placeholder="Promotion Name"
+                            onChange={this.handleInputChanges} 
+                            value={this.state.promotionName}/>
+                        <input type="text" 
+                            name="promotionDescription" 
+                            className="form-control" 
+                            placeholder="Promotion Description" 
+                            onChange={this.handleInputChanges} 
+                            value={this.state.promotionDescription}
+                            />
+                        <input type="file"
+                            name="file"
+                            className="form-control"
+                            placeholder="Upload file"
+                            onChange={this.handleFileChanges}
+                            />
+                        <button className="btn btn-primary">Upload new promotion</button>
+                    </form>
                 </div>
             )
         } else {
@@ -120,19 +137,25 @@ class AdminCabinet extends Component {
     }
 
     deletePromotion = (id) => {
-        const {clothService, token, deletePromotion} = this.props
+        const {clothService, token} = this.props
+        const {promotions} = this.state
 
         clothService.performDeleteRequest(`/promotions/${id}`, {"accessToken":token})
             .then(res => {
                 if (res.ok) {
-                    deletePromotion(id)
+                    const itemIndex = promotions.findIndex(item => item.id === id)
+
+                    this.setState({promotions: [
+                        promotions.slice(0, itemIndex),
+                        promotions.slice(itemIndex + 1)
+                    ]})
                 }
             })
     }
 
     render() {
-        const {user, error} = this.state
-        const {roles, promotions} = this.props
+        const {user, error, promotions} = this.state
+        const {roles} = this.props
 
         const promotionListGroupItems = promotions.map(prom => {
             return (
@@ -166,13 +189,8 @@ class AdminCabinet extends Component {
 const mapStateToProps = (state) => {
     return {
         roles: state.roles,
-        token: state.token,
-        promotions: state.promotions
+        token: state.token
     }
 }
 
-const mapDispatchToProps = {
-    addPromotion, promotionUploaded, deletePromotion
-}
-
-export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(AdminCabinet))
+export default WithClothService()(connect(mapStateToProps)(AdminCabinet))

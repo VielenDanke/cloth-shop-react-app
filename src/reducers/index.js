@@ -1,5 +1,4 @@
 const initialState = {
-    clothes: [],
     loading: true,
     categories: [],
     token: "",
@@ -10,18 +9,6 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case "CLOTH_LIST":
-            return {
-                ...state,
-                clothes: action.payload,
-                loading: false
-            }
-        case "CLOTH_REQUESTED":
-            return {
-                ...state,
-                clothes: state.clothes,
-                loading: true
-            }    
         case "CATEGORY_LIST": 
             return {
                 ...state,
@@ -64,7 +51,7 @@ const reducer = (state = initialState, action) => {
             }
             return {
                 ...state,
-                promotions: [
+                cart: [
                     ...state.cart.slice(0, itemIndex),
                     ...state.cart.slice(itemIndex + 1)
                 ]
@@ -74,33 +61,7 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 token: action.token,
                 roles: action.roles
-            } 
-        case "PROMOTION_UPLOADED":
-            return {
-                ...state,
-                promotions: action.payload
-            }   
-        case "ADD_PROMOTION":
-            const promotion = action.payload
-
-            const newPromArray = [...state.promotions, promotion]
-
-            return {
-                ...state,
-                promotions: newPromArray
-            }     
-        case "DELETE_PROMOTION":
-            const promotionId = action.payload
-            
-            const promotionIndex = state.promotions.findIndex(prom => prom.id === promotionId)
-           
-            return {
-                ...state,
-                promotions: [
-                    ...state.promotions.slice(0, promotionIndex),
-                    ...state.promotions.slice(promotionIndex + 1)
-                ]
-            }   
+            }  
         default:
             return state 
     }

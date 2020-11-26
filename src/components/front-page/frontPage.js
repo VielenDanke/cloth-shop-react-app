@@ -1,25 +1,31 @@
 import React, {Component} from 'react'
 import { Spinner, UncontrolledCarousel } from 'reactstrap';
-import {promotionUploaded} from "../../actions"
-import {connect} from "react-redux"
 
 import "./frontPage.css"
 
 class FrontPage extends Component {
 
+    state = {
+        promotions: [],
+        loading: true
+    }
+
     componentDidMount() {
-        const {clothService, promotionUploaded} = this.props
+        const {clothService} = this.props
 
         clothService.getPromotions()
             .then(res => {
-                promotionUploaded(res)
+                this.setState({
+                    promotions: res,
+                    loading: false
+                })
             })
     }
     
     render() {
-        const {promotions} = this.props
+        const {promotions, loading} = this.state
 
-        if (!promotions || promotions.length === 0) {
+        if (loading) {
             return <Spinner/>
         }
 
@@ -39,14 +45,4 @@ class FrontPage extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        promotions: state.promotions
-    }
-}
-
-const mapDispatchToProps = {
-    promotionUploaded
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(FrontPage)
+export default FrontPage

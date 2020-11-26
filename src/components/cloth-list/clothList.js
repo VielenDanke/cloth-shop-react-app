@@ -1,6 +1,4 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import {clothLoaded, clothRequested} from "../../actions"
 import {ListGroup, ListGroupItem, Spinner} from 'reactstrap'
 import WithClothService from "../hoc"
 import ClothItem from "../cloth-item"
@@ -9,26 +7,27 @@ import "./clothList.css"
 
 class ClothList extends Component {
 
+    state = {
+        clothes: [],
+        loading: true
+    }
+
     componentDidMount() {
-        const {fetchedClothList, clothLoaded, clothRequested} = this.props
+        const {fetchedClothList} = this.props
 
-        clothRequested()
-
-        fetchedClothList.then(res => clothLoaded(res))
+        fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
     }
 
     componentDidUpdate(prevProps) {
-        const {fetchedClothList, clothLoaded, clothRequested} = this.props
+        const {fetchedClothList} = this.props
 
         if (this.props.pathVariable !== prevProps.pathVariable) {
-            clothRequested()
-
-            fetchedClothList.then(res => clothLoaded(res))
+            fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
         }
     }
     
     render() {
-        const {clothes, loading} = this.props
+        const {clothes, loading} = this.state
 
         console.log(clothes)
 
@@ -50,15 +49,4 @@ class ClothList extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        clothes: state.clothes,
-        loading: state.loading
-    }
-}
-
-const mapDispatchToProps = {
-    clothLoaded, clothRequested
-}
-
-export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(ClothList))
+export default WithClothService()(ClothList)

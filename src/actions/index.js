@@ -1,18 +1,5 @@
 import {ACCESS_TOKEN, ROLES} from "../constants"
 
-const clothLoaded = (clothList) => {
-    return {
-        type: "CLOTH_LIST",
-        payload: clothList
-    }
-}
-
-const clothRequested = () => {
-    return {
-        type: "CLOTH_REQUESTED"
-    }
-}
-
 const categoryLoaded = (categories) => {
     return {
         type: "CATEGORY_LIST",
@@ -52,36 +39,10 @@ const logout = () => {
     }
 }
 
-const promotionUploaded = (promotions) => {
-    return {
-        type: "PROMOTION_UPLOADED",
-        payload: promotions
-    }
-}
-
-const addPromotion = (promotion) => {
-    return {
-        type: "ADD_PROMOTION",
-        payload: promotion
-    }
-}
-
-const deletePromotion = (id) => {
-    return {
-        type: "DELETE_PROMOTION",
-        payload: id
-    }
-}
-
 export {
-    clothLoaded,
-    clothRequested,
     categoryLoaded,
     userLoaded,
     addClothToCart,
     deleteClothFromCart,
     logout,
-    promotionUploaded,
-    addPromotion,
-    deletePromotion
 }
