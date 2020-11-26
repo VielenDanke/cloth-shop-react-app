@@ -9,7 +9,10 @@ class LoginForm extends Component {
     state = {
         username: '',
         password: '',
-        error: false
+        resultObject: {
+            success: true,
+            message: ''
+        }
     }
 
     handleInputChanges = (event) => {
@@ -26,8 +29,12 @@ class LoginForm extends Component {
         event.preventDefault()
 
         const {userService, userLoaded} = this.props
+        const {username, password} = this.state
 
-        const loginRequest = Object.assign({}, this.state)
+        const loginRequest = {
+            username: username,
+            password: password
+        }
 
         userService.getConfigurableResource(
             "/auth/login", "POST", {"Content-Type":"application/json"}, loginRequest
@@ -38,20 +45,28 @@ class LoginForm extends Component {
 
                 if (accessTokenHeader && rolesHeader) {
                     userLoaded(accessTokenHeader, rolesHeader)
-                    this.setState({error: false, username: '', password: ''})
+                    this.setState({
+                        resultObject: {success: true, message: ''},
+                        username: '', 
+                        password: ''
+                    })
                 } else {
                     throw new Error("Token or Roles is not defined")
                 }
             })
             .catch(reason => {
-                this.setState({error: true, username: '', password: ''})
+                this.setState({
+                    resultObject: {success: false, message: 'Login failed'}, 
+                    username: '',
+                    password: ''
+                })
             })
     }
 
     render() {
-        const {error} = this.state
+        const {resultObject} = this.state
 
-        const errorRendering = error ? <h2>Something went wrong</h2> : null
+        const errorRendering = resultObject.success ? null : <h2>{resultObject.message}</h2>
 
         return (
             <div>

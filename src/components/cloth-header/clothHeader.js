@@ -23,7 +23,10 @@ class ClothHeader extends Component {
                 {roles === "ROLE_USER" ? <Link to="/cabinet/user">Cabinet</Link> : null}
                 <Link to="/logout/" onClick={logout}>Logout</Link>
             </div> : 
-            <Link to="/login/">Login</Link>
+            <div>
+                <Link to="/login/">Login</Link>
+                <Link to="/registration/">Registartion</Link>
+            </div>
 
         return (
             <Navbar color="light" light expand="lg">

@@ -44,5 +44,5 @@ export {
     userLoaded,
     addClothToCart,
     deleteClothFromCart,
-    logout,
+    logout
 }

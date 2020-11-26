@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux"
-import {addClothToCart} from "../../actions"
+import {addClothToCart, deleteCloth} from "../../actions"
+import WithClothService from "../hoc"
 import {Card, UncontrolledCarousel, CardText, CardBody,
         CardTitle, CardSubtitle, Button, Dropdown, 
         DropdownToggle, DropdownMenu, DropdownItem, Row, Col } from 'reactstrap'
@@ -24,8 +25,17 @@ class ClothItem extends Component {
         addClothToCart(cloth)
     }
 
+    onClothDelete = (id) => {
+        const {clothService, token, deleteCloth} = this.props
+
+        clothService.performDeleteRequest(`/clothes/${id}`, {"accessToken": token})
+            .then(res => {
+                deleteCloth(id)
+            })
+    }
+
     render() {
-        const {clothItem: {name, color, description, price, id, lineSizes, images}} = this.props
+        const {clothItem: {name, color, description, price, id, lineSizes, images}, roles} = this.props
         const {dropdownOpen} = this.state
 
         const imagesForRender = images.map((image, i) => {
@@ -35,6 +45,10 @@ class ClothItem extends Component {
                 key: i
             }
         })
+
+        const renderDeleteButton = roles.includes("ROLE_ADMIN") ? 
+                                    <Button onClick={() => this.onClothDelete(id)}>Delete</Button> : 
+                                    null
 
         return (
                 <Row>
@@ -63,6 +77,7 @@ class ClothItem extends Component {
                                     }
                                 </DropdownMenu>
                             </Dropdown>
+                            {renderDeleteButton}
                             </CardBody>
                         </Card>
                     </Col>
@@ -73,12 +88,14 @@ class ClothItem extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        cart: state.cart
+        cart: state.cart,
+        roles: state.roles,
+        token: state.token
     }
 }
 
 const mapDispatchToProps = {
-    addClothToCart
+    addClothToCart, deleteCloth
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClothItem)
+export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(ClothItem))

@@ -29,8 +29,6 @@ class ClothList extends Component {
     render() {
         const {clothes, loading} = this.state
 
-        console.log(clothes)
-
         if (loading) {
             return <Spinner className="spinner__cloth-list"/>
         }
