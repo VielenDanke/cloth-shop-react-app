@@ -13,7 +13,20 @@ class AdminCabinet extends Component {
         promotionName: "",
         promotionDescription: "",
         promotionId: "",
-        promotionFileImage: null
+        promotionFileImage: null,
+        clothName: "",
+        clothDescription: "",
+        clothSex: "",
+        clothColor: "",
+        clothPrice: null,
+        clothCategory: "",
+        clothAge: null,
+        clothAmount: null,
+        clothHeight: "",
+        clothMaterial: "",
+        materialPercentage: null,
+        lineSizes: [],
+        materialList: []
     }
 
     componentDidMount() {
@@ -103,37 +116,177 @@ class AdminCabinet extends Component {
         }
     }
 
-    renderPromotionUploadComponent = (role) => {
-        if (role === "ROLE_ADMIN") {
-            return (
-                <div>
-                    <form onSubmit={this.performPromotionSaving}>
-                        <input type="text" 
-                            name="promotionName" 
-                            className="form-control" 
-                            placeholder="Promotion Name"
-                            onChange={this.handleInputChanges} 
-                            value={this.state.promotionName}/>
-                        <input type="text" 
-                            name="promotionDescription" 
-                            className="form-control" 
-                            placeholder="Promotion Description" 
-                            onChange={this.handleInputChanges} 
-                            value={this.state.promotionDescription}
-                            />
-                        <input type="file"
-                            name="file"
-                            className="form-control"
-                            placeholder="Upload file"
-                            onChange={this.handleFileChanges}
-                            />
-                        <button className="btn btn-primary">Upload new promotion</button>
-                    </form>
-                </div>
-            )
-        } else {
-            return
+    performClothSaving = (event) => {
+        event.preventDefault()
+
+        const {
+            clothName, 
+            clothDescription, 
+            clothSex, clothColor, 
+            clothPrice, 
+            clothCategory,
+            lineSizes, 
+            materialList} = this.state
+
+        const clothSaveRequest = {
+            name: clothName,
+            description: clothDescription,
+            sex: clothSex,
+            color: clothColor,
+            price: clothPrice,
+            category: clothCategory,
+            lineSizes: lineSizes,
+            materialList: materialList
         }
+
+        const {clothService, token} = this.props
+
+        clothService.performRequest(
+            "POST", {"accessToken":token}, clothSaveRequest, "/clothes"
+        ).then(res => {
+            this.setState({
+                clothSavedId: res.id
+            })
+        })
+    }
+
+    addLineSizeToCloth = (event) => {
+        event.preventDefault()
+
+        const {clothAge, clothAmount, clothHeight, lineSizes} = this.state;
+
+        this.setState({
+            lineSizes: [
+                ...lineSizes,
+                {
+                    age: clothAge,
+                    height: clothHeight,
+                    amount: clothAmount
+                }
+            ]
+        })
+    }
+
+    addMaterialToCloth = (event) => {
+        event.preventDefault()
+
+        const {materialList, clothMaterial, materialPercentage} = this.state
+
+        this.setState({
+            materialList: [
+                ...materialList,
+                {
+                    material: clothMaterial,
+                    percentage: materialPercentage
+                }
+            ]
+        })
+    }
+
+    renderPromotionUploadComponent = () => {
+        return (
+            <div>
+                <form onSubmit={this.performPromotionSaving}>
+                    <input type="text" 
+                        name="promotionName" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.promotionName}/>
+                    <input type="text" 
+                        name="promotionDescription" 
+                        className="form-control" 
+                        placeholder="Promotion Description" 
+                        onChange={this.handleInputChanges} 
+                        value={this.state.promotionDescription}/>
+                    <input type="file"
+                        name="file"
+                        className="form-control"
+                        placeholder="Upload file"
+                        onChange={this.handleFileChanges}/>
+                    <button className="btn btn-primary">Upload new promotion</button>
+                </form>
+            </div>
+        )
+    }
+
+    renderClothUploadComponent = () => {
+        return (
+            <div>
+                <form onSubmit={this.performClothSaving}>
+                    <input type="text" 
+                        name="clothName" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothName}/>
+                    <input type="text" 
+                        name="clothDescription" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothDescription}/>
+                    <input type="text" 
+                        name="clothSex" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothSex}/>
+                    <input type="text" 
+                        name="clothColor" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothColor}/>
+                    <input type="number" 
+                        name="clothPrice" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothPrice}/>
+                    <input type="text" 
+                        name="clothCategory" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges} 
+                        value={this.state.clothCategory}/>
+                </form>
+                <form onSubmit={this.addLineSizeToCloth}>
+                    <input type="number" 
+                        name="clothAge" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges}
+                        value={this.state.clothAge}/>
+                    <input type="number" 
+                        name="clothAmout" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges}
+                        value={this.state.clothAmout}/>
+                    <input type="text" 
+                        name="clothHeight" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges}
+                        value={this.state.clothHeight}/>
+                </form>
+                <form onSubmit={this.addMaterialToCloth}>
+                    <input type="text" 
+                        name="clothMaterial" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges}
+                        value={this.state.clothMaterial}/>
+                    <input type="number" 
+                        name="materialPercentage" 
+                        className="form-control" 
+                        placeholder="Promotion Name"
+                        onChange={this.handleInputChanges}
+                        value={this.state.materialPercentage}/>
+                </form>
+            </div>
+        )
     }
 
     deletePromotion = (id) => {
@@ -178,6 +331,7 @@ class AdminCabinet extends Component {
             <div>
                 <h1>Hello, {user.username}</h1>
                 {this.renderPromotionUploadComponent(roles)}  
+                {this.renderClothUploadComponent()}
                 <ListGroup>
                     {promotionListGroupItems}
                 </ListGroup>  

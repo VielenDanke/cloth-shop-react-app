@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from "react-redux"
-import {addClothToCart, deleteCloth} from "../../actions"
+import {addClothToCart} from "../../actions"
 import WithClothService from "../hoc"
 import {Card, UncontrolledCarousel, CardText, CardBody,
         CardTitle, CardSubtitle, Button, Dropdown, 
@@ -26,11 +26,11 @@ class ClothItem extends Component {
     }
 
     onClothDelete = (id) => {
-        const {clothService, token, deleteCloth} = this.props
+        const {clothService, token} = this.props
 
         clothService.performDeleteRequest(`/clothes/${id}`, {"accessToken": token})
             .then(res => {
-                deleteCloth(id)
+                
             })
     }
 
@@ -95,7 +95,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-    addClothToCart, deleteCloth
+    addClothToCart
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(ClothItem))
