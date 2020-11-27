@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import WithClothService from '../hoc'
-import Spinner from '../spinner'
+import {Spinner} from 'reactstrap'
 import {connect} from 'react-redux'
 import { ListGroup, ListGroupItem } from 'reactstrap'
 import {categoryLoaded} from "../../actions"

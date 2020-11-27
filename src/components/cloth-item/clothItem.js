@@ -3,31 +3,40 @@ import {connect} from "react-redux"
 import {addClothToCart} from "../../actions"
 import WithClothService from "../hoc"
 import {Card, UncontrolledCarousel, CardText, CardBody,
-        CardTitle, CardSubtitle, Button, Dropdown, 
-        DropdownToggle, DropdownMenu, DropdownItem, Row, Col } from 'reactstrap'
+        CardTitle, CardSubtitle, Button, Row, Col } from 'reactstrap'
 
 import "./clothItem.css"
 
 class ClothItem extends Component {
 
     state = {
-        dropdownOpen: false
+        dropdownOpen: false,
+        lineSize: `${this.props.clothItem.lineSizes[0].age} ${this.props.clothItem.lineSizes[0].height} ${this.props.clothItem.lineSizes[0].amount}`
     }
 
-    toggle = () => {
-        const {dropdownOpen} = this.state
-        this.setState({dropdownOpen: !dropdownOpen})
-    }
-
-    addClothToCart = (cloth) => {
+    clothToCart = (cloth) => {
         const {addClothToCart} = this.props
+
+        console.log(cloth)
 
         addClothToCart(cloth)
     }
 
+    handleOptionLineSizeChanges = (event) => {
+        this.setState({
+            lineSize: event.target.value
+        })
+    }
+
     render() {
         const {clothItem: {name, color, description, price, id, lineSizes, images}, roles, onClothDelete} = this.props
-        const {dropdownOpen} = this.state
+        const {lineSize} = this.state
+
+        const renderLineSizes = lineSizes.map(item => {
+            return (
+                <option value={`${item.age} ${item.height} ${item.amount}`}>Age: {item.age}, Height: {item.height}, Amount: {item.amount}</option>
+            )
+        })
 
         const imagesForRender = images.map((image, i) => {
             ++i
@@ -40,6 +49,15 @@ class ClothItem extends Component {
         const renderDeleteButton = roles.includes("ROLE_ADMIN") ? 
                                     <Button onClick={(event) => onClothDelete(id, event)}>Delete</Button> : 
                                     null
+        
+        const splittedLineSize = lineSize.split(" ")
+
+        const clothCartItem = {
+            id: id,
+            age: Number.parseInt(splittedLineSize[0]),
+            height: splittedLineSize[1],
+            amount: Number.parseInt(splittedLineSize[2])
+        }
 
         return (
                 <Row>
@@ -53,22 +71,14 @@ class ClothItem extends Component {
                             <CardBody>
                                 <CardText>{price} KZT</CardText>
                                 <CardText>{description}</CardText>
-                                <Button onClick={() => addClothToCart({
-                                    id
-                                })}>Add to cart</Button>
-                                <Dropdown direction="right" isOpen={dropdownOpen} toggle={this.toggle}>
-                                <DropdownToggle caret>
-                                    Line sizes
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    {
-                                        lineSizes.map(item => {
-                                            return <DropdownItem key={item.age} toggle={false}>{item.amount}</DropdownItem>
-                                        })
-                                    }
-                                </DropdownMenu>
-                            </Dropdown>
-                            {renderDeleteButton}
+                                <Button onClick={() => this.clothToCart(clothCartItem)}>Add to cart</Button>
+                                <label>
+                                    Choose line size
+                                    <select value={this.state.lineSize} onChange={this.handleOptionLineSizeChanges}>
+                                        {renderLineSizes}
+                                    </select>
+                                </label>
+                                {renderDeleteButton}
                             </CardBody>
                         </Card>
                     </Col>
