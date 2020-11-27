@@ -210,7 +210,10 @@ class AdminCabinet extends Component {
                     height: clothHeight,
                     amount:  Number.parseInt(clothAmount)
                 }
-            ]
+            ],
+            clothAge: null,
+            clothHeight: "",
+            clothAmount: null
         })
     }
 
@@ -225,8 +228,10 @@ class AdminCabinet extends Component {
                 {
                     material: clothMaterial,
                     percentage: Number.parseInt(materialPercentage)
-                }
-            ]
+                },
+            ],
+            clothMaterial: "",
+            materialPercentage: null
         })
         event.target.reset()
     }
