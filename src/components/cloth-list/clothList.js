@@ -14,17 +14,19 @@ class ClothList extends Component {
     }
 
     componentDidMount() {
-        const {fetchedClothList} = this.props
+        const {clothService, gender, category} = this.props
 
-        fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
+        clothService.getClothesByCategoryAndSex(gender, category)
+                .then(res => this.setState({clothes: res, loading: false}))
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {fetchedClothList, clothService, gender, category} = this.props
+        const {clothService, gender, category} = this.props
         const {loading} = this.state
 
         if (this.props.pathVariable !== prevProps.pathVariable) {
-            fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
+            clothService.getClothesByCategoryAndSex(gender, category)
+                .then(res => this.setState({clothes: res, loading: false}))
         }
         if (loading) {
             clothService.getClothesByCategoryAndSex(gender, category)

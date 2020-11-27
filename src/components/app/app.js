@@ -13,7 +13,7 @@ import RegistrationForm from "../registration-form"
 class App extends Component {
 
   render() {
-    const {clothService, categoryService, token, roles} = this.props
+    const {categoryService, clothService, token, roles} = this.props
 
     const loginForm = token && roles ? 
       <div>
@@ -37,18 +37,12 @@ class App extends Component {
         <Route path="/clothes/man/:category" render={({match, location}) => {
           const gender = "MAN"
           const {category} = match.params
-          return <ClothList pathVariable={location.pathname} 
-          fetchedClothList={clothService.getClothesByCategoryAndSex(gender, category)}
-          category={category}
-          gender={gender}/>
+          return <ClothList pathVariable={location.pathname} category={category} gender={gender}/>
         }}/>
         <Route path="/clothes/woman/:category" render={({match, location}) => {
           const gender = "WOMAN"
           const {category} = match.params
-          return <ClothList pathVariable={location.pathname}  
-          fetchedClothList={clothService.getClothesByCategoryAndSex(gender, category)}
-          category={category}
-          gender={gender}/>
+          return <ClothList pathVariable={location.pathname} category={category} gender={gender}/>
         }}/>
         {loginForm}
       </div>
