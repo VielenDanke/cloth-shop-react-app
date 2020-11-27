@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {ListGroup, ListGroupItem, Spinner} from 'reactstrap'
 import WithClothService from "../hoc"
 import ClothItem from "../cloth-item"
+import {connect} from 'react-redux'
 
 import "./clothList.css"
 
@@ -18,12 +19,37 @@ class ClothList extends Component {
         fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
     }
 
-    componentDidUpdate(prevProps) {
-        const {fetchedClothList} = this.props
+    componentDidUpdate(prevProps, prevState) {
+        const {fetchedClothList, clothService, gender, category} = this.props
+        const {loading} = this.state
 
         if (this.props.pathVariable !== prevProps.pathVariable) {
             fetchedClothList.then(res => this.setState({clothes: res, loading: false}))
         }
+        if (loading) {
+            clothService.getClothesByCategoryAndSex(gender, category)
+                .then(res => this.setState({clothes: res, loading: false}))
+        }
+    }
+
+    onClothDelete = (id, event) => {
+        event.preventDefault()
+
+        const {clothService, token} = this.props
+        const {clothes} = this.state
+
+        clothService.performDeleteRequest(`/clothes/${id}`, {"accessToken": token})
+            .then(res => {
+                const itemIndex = clothes.findIndex(item => item.id === id)
+
+                this.setState({
+                    clothes: [
+                        clothes.slice(0, itemIndex),
+                        clothes.slice(itemIndex + 1)
+                    ],
+                    loading: true
+                })
+            })
     }
     
     render() {
@@ -35,7 +61,7 @@ class ClothList extends Component {
         const renderClothList = clothes.map(item => {
             return (
                 <ListGroupItem key={item.id}>
-                        <ClothItem clothItem={item}/>
+                        <ClothItem clothItem={item} onClothDelete={this.onClothDelete}/>
                 </ListGroupItem>
             )
         })
@@ -47,4 +73,10 @@ class ClothList extends Component {
     }
 }
 
-export default WithClothService()(ClothList)
+const mapStateToProps = (state) => {
+    return {
+        token: state.token
+    }
+}
+
+export default WithClothService()(connect(mapStateToProps)(ClothList))

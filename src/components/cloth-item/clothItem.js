@@ -25,17 +25,8 @@ class ClothItem extends Component {
         addClothToCart(cloth)
     }
 
-    onClothDelete = (id) => {
-        const {clothService, token} = this.props
-
-        clothService.performDeleteRequest(`/clothes/${id}`, {"accessToken": token})
-            .then(res => {
-                
-            })
-    }
-
     render() {
-        const {clothItem: {name, color, description, price, id, lineSizes, images}, roles} = this.props
+        const {clothItem: {name, color, description, price, id, lineSizes, images}, roles, onClothDelete} = this.props
         const {dropdownOpen} = this.state
 
         const imagesForRender = images.map((image, i) => {
@@ -47,7 +38,7 @@ class ClothItem extends Component {
         })
 
         const renderDeleteButton = roles.includes("ROLE_ADMIN") ? 
-                                    <Button onClick={() => this.onClothDelete(id)}>Delete</Button> : 
+                                    <Button onClick={(event) => onClothDelete(id, event)}>Delete</Button> : 
                                     null
 
         return (

@@ -35,14 +35,20 @@ class App extends Component {
           return <FrontPage match={match} location={location} clothService={clothService}/>
         }}/>
         <Route path="/clothes/man/:category" render={({match, location}) => {
+          const gender = "MAN"
           const {category} = match.params
           return <ClothList pathVariable={location.pathname} 
-          fetchedClothList={clothService.getClothesByCategoryAndSex("MAN", category)}/>
+          fetchedClothList={clothService.getClothesByCategoryAndSex(gender, category)}
+          category={category}
+          gender={gender}/>
         }}/>
         <Route path="/clothes/woman/:category" render={({match, location}) => {
+          const gender = "WOMAN"
           const {category} = match.params
           return <ClothList pathVariable={location.pathname}  
-          fetchedClothList={clothService.getClothesByCategoryAndSex("WOMAN", category)}/>
+          fetchedClothList={clothService.getClothesByCategoryAndSex(gender, category)}
+          category={category}
+          gender={gender}/>
         }}/>
         {loginForm}
       </div>
