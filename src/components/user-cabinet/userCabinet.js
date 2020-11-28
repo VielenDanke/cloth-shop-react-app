@@ -7,7 +7,7 @@ class UserCabinet extends Component {
 
     state = {
         user: undefined,
-        userCart: undefined
+        userCart: []
     }
 
     componentDidMount() {
@@ -41,7 +41,7 @@ class UserCabinet extends Component {
         const renderedCart = userCart.map(item => {
             return (
                 <ListGroupItem key={item.id}>
-                    {item.age}, {item.height}, {item.amount}
+                    {item.name}, {item.description}, {item.sex}
                 </ListGroupItem>
             )
         })
