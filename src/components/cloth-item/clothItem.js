@@ -29,7 +29,8 @@ class ClothItem extends Component {
     }
 
     render() {
-        const {clothItem: {name, color, description, price, id, lineSizes, images}, roles, onClothDelete} = this.props
+        const {clothItem: {name, color, description, price, id, lineSizes, images}, 
+                          roles, onClothDelete, cart} = this.props
         const {lineSize} = this.state
 
         const renderLineSizes = lineSizes.map(item => {
@@ -59,6 +60,10 @@ class ClothItem extends Component {
             amount: Number.parseInt(splittedLineSize[2])
         }
 
+        const renderAddButton = cart.find(item => item.id === id) ? 
+                                <CardText>Already in the cart</CardText> :
+                                <Button onClick={() => this.clothToCart(clothCartItem)}>Add to cart</Button>
+
         return (
                 <Row>
                     <Col sm="3">
@@ -71,13 +76,13 @@ class ClothItem extends Component {
                             <CardBody>
                                 <CardText>{price} KZT</CardText>
                                 <CardText>{description}</CardText>
-                                <Button onClick={() => this.clothToCart(clothCartItem)}>Add to cart</Button>
                                 <label>
                                     Choose line size
                                     <select value={this.state.lineSize} onChange={this.handleOptionLineSizeChanges}>
                                         {renderLineSizes}
                                     </select>
                                 </label>
+                                {renderAddButton}
                                 {renderDeleteButton}
                             </CardBody>
                         </Card>
