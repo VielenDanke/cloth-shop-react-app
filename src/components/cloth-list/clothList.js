@@ -10,28 +10,44 @@ class ClothList extends Component {
 
     state = {
         clothes: [],
-        loading: true
+        loading: true,
+        filterHeight: '',
+        filterAge: '',
+        filterColor: '',
+        clothesHeightFilter: [],
+        clothesAgeFilter: []
     }
 
     componentDidMount() {
-        const {clothService, gender, category} = this.props
-
-        clothService.getClothesByCategoryAndSex(gender, category)
-                .then(res => this.setState({clothes: res, loading: false}))
+        this.fetchClose()
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {clothService, gender, category} = this.props
         const {loading} = this.state
 
         if (this.props.pathVariable !== prevProps.pathVariable) {
-            clothService.getClothesByCategoryAndSex(gender, category)
-                .then(res => this.setState({clothes: res, loading: false}))
+            this.fetchClose()
         }
         if (loading) {
-            clothService.getClothesByCategoryAndSex(gender, category)
-                .then(res => this.setState({clothes: res, loading: false}))
+            this.fetchClose()
         }
+    }
+
+    fetchClose = () => {
+        const {clothService, gender, category} = this.props
+
+        clothService.getClothesByCategoryAndSex(gender, category)
+            .then(res => {
+                const lineSizes = res.flatMap(item => item.lineSizes)
+                const uniquHeightArray = [...new Set(lineSizes.map(item => item.height))]
+                const uniqueAgeArray = [...new Set(lineSizes.map(item => item.age))]
+                this.setState({
+                    clothes: res, 
+                    loading: false,
+                    clothesHeightFilter: uniquHeightArray,
+                    clothesAgeFilter: uniqueAgeArray
+                })
+            })
     }
 
     onClothDelete = (id, event) => {
@@ -53,9 +69,81 @@ class ClothList extends Component {
                 })
             })
     }
+
+    handleHeightChangeFilter = (event) => {
+        this.setState({
+            filterHeight: event.target.value
+        })
+    }
+
+    handleAgeChangeFilter = (event) => {
+        this.setState({
+            filterAge: event.target.value
+        })
+    }
+
+    searchCloth = (event) => {
+        event.preventDefault()
+
+        const {clothService} = this.props
+        const {filterAge, filterHeight, filterColor} = this.state
+
+        let searchingObject = {}
+
+        if (filterHeight !== "all" && filterHeight !== "") {
+            searchingObject = {
+                ...searchingObject,
+                height: filterHeight
+            }
+        }
+        if (filterAge !== "all" && filterAge !== "") {
+            searchingObject = {
+                ...searchingObject,
+                age: Number.parseInt(filterAge)
+            }
+        }
+        if (filterColor !== "" && filterColor) {
+            searchingObject = {
+                ...searchingObject,
+                color: filterColor.toLowerCase()
+            }
+        }
+
+        console.log(searchingObject)
+
+        clothService.performRequest(
+                "POST", 
+                {"Content-Type":"application/json"}, 
+                searchingObject
+            ).then(res => {
+                this.setState({clothes: res})
+            })
+    }
+
+    handleInputChanges = (event) => {
+        const target = event.target
+        const inputName = target.name
+        const inputValue = target.value
+
+        this.setState({
+            [inputName]: inputValue
+        })
+    }
     
     render() {
-        const {clothes, loading} = this.state
+        const {clothes, loading, clothesHeightFilter, clothesAgeFilter} = this.state
+
+        const renderedUniqueHeightList = clothesHeightFilter.map(item => {
+            return (
+                <option value={item}>{item}</option>
+            )
+        })
+
+        const rendereUniqueAgeList = clothesAgeFilter.map(item => {
+            return (
+                <option value={item}>{item}</option>
+            )
+        })
 
         if (loading) {
             return <Spinner className="spinner__cloth-list"/>
@@ -68,9 +156,38 @@ class ClothList extends Component {
             )
         })
         return (
-            <ListGroup>
-                {renderClothList}
-            </ListGroup>       
+            <div>
+                <div>
+                    <label>
+                        Height filter
+                        <select value={this.state.filterHeight} onChange={this.handleHeightChangeFilter}>
+                            <option value="all">All</option>
+                            {renderedUniqueHeightList}
+                        </select>
+                    </label>
+                    <label>
+                        Age filter
+                        <select value={this.state.filterAge} onChange={this.handleAgeChangeFilter}>
+                            <option value="all">All</option>
+                            {rendereUniqueAgeList}
+                        </select>
+                    </label>
+                    <label>
+                        Color to find
+                        <input type="text"
+                            name="filterColor"
+                            placeholder="Color"
+                            value={this.state.filterColor}
+                            onChange={this.handleInputChanges}/>
+                    </label>
+                    <form onSubmit={this.searchCloth}>
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+                <ListGroup>
+                    {renderClothList}
+                </ListGroup>
+            </div>       
         )
     }
 }

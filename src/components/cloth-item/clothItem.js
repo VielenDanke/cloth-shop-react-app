@@ -31,7 +31,7 @@ class ClothItem extends Component {
                           roles, onClothDelete, cart} = this.props
         const {lineSize} = this.state
 
-        const renderLineSizes = lineSizes.map(item => {
+        const renderLineSizes = lineSizes.filter(item => item.amount > 0).map(item => {
             return (
                 <option value={`${item.age} ${item.height} ${item.amount}`}>Age: {item.age}, Height: {item.height}, Amount: {item.amount}</option>
             )
