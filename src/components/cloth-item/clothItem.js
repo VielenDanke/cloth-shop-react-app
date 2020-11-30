@@ -17,8 +17,6 @@ class ClothItem extends Component {
     clothToCart = (cloth) => {
         const {addClothToCart} = this.props
 
-        console.log(cloth)
-
         addClothToCart(cloth)
     }
 
