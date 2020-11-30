@@ -109,8 +109,6 @@ class ClothList extends Component {
             }
         }
 
-        console.log(searchingObject)
-
         clothService.performRequest(
                 "POST", 
                 {"Content-Type":"application/json"}, 
