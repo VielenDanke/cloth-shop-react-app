@@ -62,11 +62,11 @@ export default class ClothService {
         return await this.getResource("/promotions")
     }
 
-    getClothesBySex = async (sex) => {
+    getClothesBySex = async (gender) => {
         return await this.performRequest(
             "POST",
             {"Content-Type":"application/json"},
-            {sex: sex} 
+            {gender: gender} 
         )
     }
 
@@ -78,11 +78,11 @@ export default class ClothService {
         )
     }
 
-    getClothesByCategoryAndSex = async (sex, category) => {
+    getClothesByCategoryAndSex = async (gender, category) => {
         return await this.performRequest(
             "POST",
             {"Content-Type":"application/json"},
-            {category: category, sex: sex}
+            {category: category, gender: gender}
         )
     }
 }

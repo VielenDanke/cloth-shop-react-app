@@ -89,8 +89,8 @@ class ClothList extends Component {
         const {filterAge, filterHeight, filterColor} = this.state
 
         let searchingObject = {
-            gender: gender,
-            category: category
+            gender: gender.toLowerCase(),
+            category: category.toLowerCase()
         }
 
         if (filterHeight !== "all" && filterHeight !== "") {
@@ -111,6 +111,8 @@ class ClothList extends Component {
                 color: filterColor.toLowerCase()
             }
         }
+
+        console.log(searchingObject)
 
         clothService.performRequest(
                 "POST", 
