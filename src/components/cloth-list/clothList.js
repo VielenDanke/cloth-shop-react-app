@@ -111,9 +111,6 @@ class ClothList extends Component {
                 color: filterColor.toLowerCase()
             }
         }
-
-        console.log(searchingObject)
-
         clothService.performRequest(
                 "POST", 
                 {"Content-Type":"application/json"}, 
