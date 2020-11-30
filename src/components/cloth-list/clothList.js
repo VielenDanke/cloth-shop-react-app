@@ -85,10 +85,13 @@ class ClothList extends Component {
     searchCloth = (event) => {
         event.preventDefault()
 
-        const {clothService} = this.props
+        const {clothService, gender, category} = this.props
         const {filterAge, filterHeight, filterColor} = this.state
 
-        let searchingObject = {}
+        let searchingObject = {
+            gender: gender,
+            category: category
+        }
 
         if (filterHeight !== "all" && filterHeight !== "") {
             searchingObject = {
