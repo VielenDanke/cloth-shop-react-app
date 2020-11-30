@@ -44,11 +44,6 @@ const reducer = (state = initialState, action) => {
             const clothId = action.payload
             const itemIndex = state.cart.findIndex(item => item.id === clothId)
 
-            if (!itemIndex) {
-                return {
-                    ...state
-                }
-            }
             return {
                 ...state,
                 cart: [

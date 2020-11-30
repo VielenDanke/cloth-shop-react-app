@@ -1,13 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import WithClothService from "../hoc"
-import {ListGroup, ListGroupItem, Spinner} from 'reactstrap'
+import {deleteClothFromCart} from "../../actions"
+import {Button, ListGroup, ListGroupItem, Spinner} from 'reactstrap'
 
 class UserCabinet extends Component {
 
     state = {
         user: undefined,
-        userCart: undefined
+        userCart: []
     }
 
     componentDidMount() {
@@ -22,6 +23,20 @@ class UserCabinet extends Component {
 
         const ids = cart.map(item => item.id)
         
+        this.fetchClothesCart(clothService, ids, token)
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const {cart, clothService, token} = this.props
+
+        const ids = cart.map(item => item.id)
+
+        if (prevProps.cart.length !== cart.length) {
+            this.fetchClothesCart(clothService, ids, token)
+        }
+    }
+
+    fetchClothesCart = (clothService, ids, token) => {
         clothService.performRequest(
             "POST", 
             {"accessToken":token, "Content-Type":"application/json"},
@@ -32,7 +47,12 @@ class UserCabinet extends Component {
                 userCart: res
             })
         })
+    }
 
+    onDeleteFromCart = (id) => {
+        const {deleteClothFromCart} = this.props
+
+        deleteClothFromCart(id)
     }
 
     render() {
@@ -41,7 +61,8 @@ class UserCabinet extends Component {
         const renderedCart = userCart.map(item => {
             return (
                 <ListGroupItem key={item.id}>
-                    {item.age}, {item.height}, {item.amount}
+                    {item.name}, {item.description}, {item.sex}
+                    <Button onClick={() => this.onDeleteFromCart(item.id)}>Delete from cart</Button>
                 </ListGroupItem>
             )
         })
@@ -70,4 +91,8 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default WithClothService()(connect(mapStateToProps)(UserCabinet))
+const mapDispatchToProps = {
+    deleteClothFromCart
+}
+
+export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(UserCabinet))
