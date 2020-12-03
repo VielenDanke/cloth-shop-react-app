@@ -9,6 +9,7 @@ import AdminCabinet from '../admin-cabinet'
 import UserCabinet from "../user-cabinet"
 import FrontPage from "../front-page"
 import RegistrationForm from "../registration-form"
+import Cart from "../cart"
 
 class App extends Component {
 
@@ -44,6 +45,7 @@ class App extends Component {
           const {category} = match.params
           return <ClothList pathVariable={location.pathname} category={category} gender={gender}/>
         }}/>
+        <Route path="/cart" component={Cart}/>
         {loginForm}
       </div>
     );

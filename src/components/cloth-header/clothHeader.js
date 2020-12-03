@@ -69,6 +69,7 @@ class ClothHeader extends Component {
                         </UncontrolledDropdown>
                     </NavItem>
                 </Nav>
+                <Link to="/cart/">Cart</Link>
                 {loginLogoutCabinetComponent}
             </Navbar>
         )

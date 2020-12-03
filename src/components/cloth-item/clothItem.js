@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from "react-redux"
 import {addClothToCart} from "../../actions"
 import WithClothService from "../hoc"
+import {transformToRenderedImages} from "../../services/imageService"
 import {Card, UncontrolledCarousel, CardText, CardBody,
         CardTitle, CardSubtitle, Button, Row, Col } from 'reactstrap'
 
@@ -11,13 +12,34 @@ class ClothItem extends Component {
 
     state = {
         dropdownOpen: false,
-        lineSize: `${this.props.clothItem.lineSizes[0].age} ${this.props.clothItem.lineSizes[0].height} ${this.props.clothItem.lineSizes[0].amount}`
+        lineSize: `${this.props.clothItem.lineSizes[0].age} ${this.props.clothItem.lineSizes[0].height} ${this.props.clothItem.lineSizes[0].amount}`,
+        amountToBuy: ""
     }
 
-    clothToCart = (cloth) => {
-        const {addClothToCart} = this.props
+    clothToCart = () => {
+        const {addClothToCart, clothItem: {id, price}} = this.props
+        const {amountToBuy, lineSize} = this.state
 
-        addClothToCart(cloth)
+        const splittedLineSize = lineSize.split(" ")
+
+        const numAmountToBuy = Number.parseInt(amountToBuy)
+
+        if (numAmountToBuy !== 0 && numAmountToBuy <= Number.parseInt(splittedLineSize[2])) {
+
+            const clothCartItem = {
+                id: id,
+                age: Number.parseInt(splittedLineSize[0]),
+                height: splittedLineSize[1],
+                amount: numAmountToBuy,
+                price: price
+            }
+
+            console.log(clothCartItem)
+
+            addClothToCart(clothCartItem)
+        } else {
+            return
+        }
     }
 
     handleOptionLineSizeChanges = (event) => {
@@ -26,10 +48,19 @@ class ClothItem extends Component {
         })
     }
 
+    handleInputChanges = (event) => {
+        const target = event.target
+        const inputName = target.name
+        const inputValue = target.value
+
+        this.setState({
+            [inputName]: inputValue
+        })
+    }
+
     render() {
         const {clothItem: {name, color, description, price, id, lineSizes, images}, 
                           roles, onClothDelete, cart} = this.props
-        const {lineSize} = this.state
 
         const renderLineSizes = lineSizes.filter(item => item.amount > 0).map(item => {
             return (
@@ -37,30 +68,15 @@ class ClothItem extends Component {
             )
         })
 
-        const imagesForRender = images.map((image, i) => {
-            ++i
-            return {
-                src: `data:image/jpeg;base64,${image}`,
-                key: i
-            }
-        })
+        const imagesForRender = transformToRenderedImages(images)
 
         const renderDeleteButton = roles.includes("ROLE_ADMIN") ? 
                                     <Button onClick={(event) => onClothDelete(id, event)}>Delete</Button> : 
                                     null
-        
-        const splittedLineSize = lineSize.split(" ")
-
-        const clothCartItem = {
-            id: id,
-            age: Number.parseInt(splittedLineSize[0]),
-            height: splittedLineSize[1],
-            amount: Number.parseInt(splittedLineSize[2])
-        }
 
         const renderAddButton = cart.find(item => item.id === id) ? 
                                 <CardText>Already in the cart</CardText> :
-                                <Button onClick={() => this.clothToCart(clothCartItem)}>Add to cart</Button>
+                                <Button onClick={() => this.clothToCart()}>Add to cart</Button>
 
         return (
                 <Row>
@@ -79,6 +95,14 @@ class ClothItem extends Component {
                                     <select value={this.state.lineSize} onChange={this.handleOptionLineSizeChanges}>
                                         {renderLineSizes}
                                     </select>
+                                </label>
+                                <label>
+                                    Amount of cloth to buy
+                                    <input type="number"
+                                    name="amountToBuy"
+                                    placeholder="Amount to buy"
+                                    value={this.state.amountToBuy}
+                                    onChange={this.handleInputChanges}/>
                                 </label>
                                 {renderAddButton}
                                 {renderDeleteButton}

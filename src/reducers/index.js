@@ -34,7 +34,8 @@ const reducer = (state = initialState, action) => {
                 id: clothToAdd.id,
                 age: clothToAdd.age,
                 height: clothToAdd.height,
-                amount: clothToAdd.amount
+                amount: clothToAdd.amount,
+                price: clothToAdd.price
             }
             return {
                 ...state,
