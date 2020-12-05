@@ -8,18 +8,25 @@ import {Button, ListGroup, ListGroupItem, Spinner, Row, Col, CardBody, Card, Car
 
 class Cart extends Component {
     state = {
-        userCart: []
+        userCart: [],
+        checkout: false,
+        firstName: "",
+        lastName: "",
+        city: "",
+        address: "",
+        phoneNumber: "",
+        email: ""
     }
 
     componentDidMount() {
-        const {cart, token} = this.props
+        const {cart} = this.props
 
         if (!cart || cart.length <= 0) {
             return
         }
         const ids = cart.map(item => item.id)
         
-        this.fetchClothesCart(ids, token)
+        this.fetchClothesCart(ids, false)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -28,11 +35,11 @@ class Cart extends Component {
         const ids = cart.map(item => item.id)
 
         if (prevProps.cart.length !== cart.length) {
-            this.fetchClothesCart(ids)
+            this.fetchClothesCart(ids, false)
         }
     }
 
-    fetchClothesCart = (ids) => {
+    fetchClothesCart = (ids, checkout) => {
         const {clothService} = this.props
 
         clothService.performRequest(
@@ -42,7 +49,8 @@ class Cart extends Component {
              "/clothes/cart")
         .then(res => {
             this.setState({
-                userCart: res
+                userCart: res,
+                checkout: checkout
             })
         })
     }
@@ -53,12 +61,41 @@ class Cart extends Component {
         deleteClothFromCart(id)
     }
 
+    proceedingToCheckout = () => {
+        const {cart, userService} = this.props
+
+        userService.getConfigurableResource(
+            "/cart/reserve", 
+            "POST",
+            {"Content-Type":"application/json"},
+            cart
+        ).then(res => res.json())
+        .then(res => res.map(item => item.id))
+        .then(ids => this.fetchClothesCart(ids, true))
+    }
+
+    checkoutSubmit = (event) => {
+        event.preventDefault()
+    }
+
     render() {
-        const {cart} = this.props
-        const {userCart} = this.state
+        const {cart, token, roles, userService} = this.props
+        const {userCart, checkout} = this.state
 
         if (!userCart) {
             return <Spinner/>
+        }
+
+        if (token && roles) {
+            userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
+                .then(res => this.setState({
+                    firstName: res.firstName,
+                    lastName: res.surname,
+                    city: res.city,
+                    address: res.address,
+                    phoneNumber: res.phoneNumber,
+                    email: res.username
+                }))
         }
 
         const renderedCart = userCart.map(item => {
@@ -89,6 +126,8 @@ class Cart extends Component {
 
         let totalPrice = 0
 
+        console.log(cart)
+
         cart.forEach(item => {
             totalPrice += (item.amount * item.price)
         })
@@ -100,6 +139,16 @@ class Cart extends Component {
                         {renderedCart}
                     </ListGroup>
                 </div>
+                {checkout ? 
+                        <div>
+                            <form onSubmit={this.checkoutSubmit()}>
+                                
+                            </form>
+                        </div> : 
+                        null}
+                <div>
+                    <Button onClick={this.proceedingToCheckout()}>Proceeding to checkout</Button>
+                </div>
 
             </>
         )
@@ -108,7 +157,9 @@ class Cart extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        cart: state.cart
+        cart: state.cart,
+        token: state.token,
+        roles: state.roles
     }
 }
 

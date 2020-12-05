@@ -33,9 +33,6 @@ class ClothItem extends Component {
                 amount: numAmountToBuy,
                 price: price
             }
-
-            console.log(clothCartItem)
-
             addClothToCart(clothCartItem)
         } else {
             return
