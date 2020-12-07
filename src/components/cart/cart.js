@@ -68,8 +68,17 @@ class Cart extends Component {
             "/cart/reserve", 
             "POST",
             {"Content-Type":"application/json"},
-            cart
-        ).then(res => res.json())
+            {
+                clothCartList: cart
+            }
+        ).then(res => {
+            const headers = res.headers
+
+            localStorage.setItem("STATE_ID", headers.get("STATE_ID"))
+
+            return res
+        })
+        .then(res => res.json())
         .then(res => res.map(item => item.id))
         .then(ids => this.fetchClothesCart(ids, true))
     }
@@ -86,7 +95,7 @@ class Cart extends Component {
             return <Spinner/>
         }
 
-        if (token && roles) {
+        if ((token && token.length > 0) && (roles && roles.length > 0)) {
             userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
                 .then(res => this.setState({
                     firstName: res.firstName,
@@ -147,7 +156,7 @@ class Cart extends Component {
                         </div> : 
                         null}
                 <div>
-                    <Button onClick={this.proceedingToCheckout()}>Proceeding to checkout</Button>
+                    <Button onClick={this.proceedingToCheckout}>Proceeding to checkout</Button>
                 </div>
 
             </>
