@@ -51,7 +51,12 @@ const reducer = (state = initialState, action) => {
                     ...state.cart.slice(0, itemIndex),
                     ...state.cart.slice(itemIndex + 1)
                 ]
-            }     
+            }
+        case "CLEAR_CART":
+            return {
+                ...state,
+                cart: []
+            }         
         case "LOGOUT":
             return {
                 ...state,

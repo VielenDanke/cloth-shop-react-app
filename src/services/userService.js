@@ -15,7 +15,7 @@ export default class UserService {
     getConfigurableResource = async (url, method, headers, body) => {
         const searchingDefaultUrl = `${this._defaultUrl}${url}`
 
-        const requestObj = {
+        let requestObj = {
             method: method,
             headers: headers,
         }

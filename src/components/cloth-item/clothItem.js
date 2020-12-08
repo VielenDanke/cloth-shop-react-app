@@ -24,6 +24,8 @@ class ClothItem extends Component {
 
         const numAmountToBuy = Number.parseInt(amountToBuy)
 
+        console.log(id)
+
         if (numAmountToBuy !== 0 && numAmountToBuy <= Number.parseInt(splittedLineSize[2])) {
 
             const clothCartItem = {

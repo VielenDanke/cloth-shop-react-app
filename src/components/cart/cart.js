@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import WithClothService from "../hoc"
+import Checkout from "../checkout"
 import {connect} from 'react-redux'
 import {deleteClothFromCart} from "../../actions"
 import {transformToRenderedImages} from "../../services/imageService"
@@ -9,7 +10,6 @@ import {Button, ListGroup, ListGroupItem, Spinner, Row, Col, CardBody, Card, Car
 class Cart extends Component {
     state = {
         userCart: [],
-        checkout: false,
         firstName: "",
         lastName: "",
         city: "",
@@ -26,7 +26,7 @@ class Cart extends Component {
         }
         const ids = cart.map(item => item.id)
         
-        this.fetchClothesCart(ids, false)
+        this.fetchClothesCart(ids)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -35,11 +35,11 @@ class Cart extends Component {
         const ids = cart.map(item => item.id)
 
         if (prevProps.cart.length !== cart.length) {
-            this.fetchClothesCart(ids, false)
+            this.fetchClothesCart(ids)
         }
     }
 
-    fetchClothesCart = (ids, checkout) => {
+    fetchClothesCart = (ids) => {
         const {clothService} = this.props
 
         clothService.performRequest(
@@ -49,8 +49,7 @@ class Cart extends Component {
              "/clothes/cart")
         .then(res => {
             this.setState({
-                userCart: res,
-                checkout: checkout
+                userCart: res
             })
         })
     }
@@ -84,69 +83,15 @@ class Cart extends Component {
         })
         .then(res => res.json())
         .then(res => res.clothCartList.map(item => item.id))
-        .then(ids => this.fetchClothesCart(ids, true))
-    }
-
-    checkoutSubmit = (event) => {
-        event.preventDefault()
-
-        const {userService} = this.props
-
-        const stateID = localStorage.getItem("STATE_ID")
-
-        const {firstName, lastName, city, address, phoneNumber, email} = this.state
-
-        const arr = [firstName, lastName, city, address, phoneNumber, email]
-
-        const arrAfterFiltering = arr.filter(item => item != null && item.length > 3)
-
-        if (arr.length != arrAfterFiltering.length) {
-            return
-        }
-
-        userService.getConfigurableResource(
-            "/cart/process",
-            "POST",
-            {"Content-Type":"application/json", "STATE_ID":stateID},
-            {
-                firstName: firstName,
-                lastName: lastName,
-                city: city,
-                address: address,
-                phoneNumber: phoneNumber,
-                email: email
-            }
-        ).then()
-    }
-
-    handleInputChanges = (event) => {
-        const target = event.target
-        const inputName = target.name
-        const inputValue = target.value
-
-        this.setState({
-            [inputName]: inputValue
-        })
+        .then(ids => this.fetchClothesCart(ids))
     }
 
     render() {
-        const {cart, token, roles, userService} = this.props
-        const {userCart, checkout} = this.state
+        const {cart} = this.props
+        const {userCart} = this.state
 
         if (!userCart) {
             return <Spinner/>
-        }
-
-        if ((token && token.length > 0) && (roles && roles.length > 0)) {
-            userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
-                .then(res => this.setState({
-                    firstName: res.firstName,
-                    lastName: res.surname,
-                    city: res.city,
-                    address: res.address,
-                    phoneNumber: res.phoneNumber,
-                    email: res.username
-                }))
         }
 
         const renderedCart = userCart.map(item => {
@@ -180,50 +125,22 @@ class Cart extends Component {
         cart.forEach(item => {
             totalPrice += (item.amount * item.price)
         })
+
+        const stateID = localStorage.getItem("STATE_ID")
+
         return (
             <>
-                <div>Total price: {totalPrice}</div>
-                <div>
-                    <ListGroup>
-                        {renderedCart}
-                    </ListGroup>
-                </div>
-                {checkout ? 
-                        <div>
-                            <form onSubmit={this.checkoutSubmit}>
-                                <input type="text"
-                                    name="firstName"
-                                    value={this.state.firstName}
-                                    placeholder="First Name"
-                                    onChange={this.handleInputChanges}/>
-                                <input type="text"
-                                    name="lastName"
-                                    value={this.state.lastName}
-                                    placeholder="Last Name"
-                                    onChange={this.handleInputChanges}/>
-                                <input type="text"
-                                    name="city"
-                                    value={this.state.city}
-                                    placeholder="City"
-                                    onChange={this.handleInputChanges}/>
-                                <input type="text"
-                                    name="address"
-                                    value={this.state.address}
-                                    placeholder="Address"
-                                    onChange={this.handleInputChanges}/>
-                                <input type="text"
-                                    name="phoneNumber"
-                                    value={this.state.phoneNumber}
-                                    placeholder="Phone Number"
-                                    onChange={this.handleInputChanges}/>
-                                <input type="text"
-                                    name="email"
-                                    value={this.state.email}
-                                    placeholder="Email"
-                                    onChange={this.handleInputChanges}/>
-                            </form>
-                        </div> : 
-                        null}
+                {stateID && stateID !== null && stateID.length > 0 ? 
+                        <Checkout/> : 
+                        <>
+                            <div>Total price: {totalPrice}</div>
+                            <div>
+                                <ListGroup>
+                                    {renderedCart}
+                                </ListGroup>
+                            </div>
+                        </>
+                }
                 <div>
                     <Button onClick={this.proceedingToCheckout}>Proceeding to checkout</Button>
                 </div>
@@ -235,9 +152,7 @@ class Cart extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        cart: state.cart,
-        token: state.token,
-        roles: state.roles
+        cart: state.cart
     }
 }
 

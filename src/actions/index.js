@@ -29,6 +29,12 @@ const deleteClothFromCart = (clothId) => {
     }
 }
 
+const clearCart = () => {
+    return {
+        type: "CLEAR_CART"
+    }
+}
+
 const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN)
     localStorage.removeItem(ROLES)
@@ -44,5 +50,6 @@ export {
     userLoaded,
     addClothToCart,
     deleteClothFromCart,
-    logout
+    logout,
+    clearCart
 }
