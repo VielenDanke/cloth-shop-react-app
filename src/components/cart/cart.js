@@ -64,6 +64,10 @@ class Cart extends Component {
     proceedingToCheckout = () => {
         const {cart, userService} = this.props
 
+        console.log(JSON.stringify({
+            clothCartList: cart
+        }))
+
         userService.getConfigurableResource(
             "/cart/reserve", 
             "POST",
@@ -79,12 +83,50 @@ class Cart extends Component {
             return res
         })
         .then(res => res.json())
-        .then(res => res.map(item => item.id))
+        .then(res => res.clothCartList.map(item => item.id))
         .then(ids => this.fetchClothesCart(ids, true))
     }
 
     checkoutSubmit = (event) => {
         event.preventDefault()
+
+        const {userService} = this.props
+
+        const stateID = localStorage.getItem("STATE_ID")
+
+        const {firstName, lastName, city, address, phoneNumber, email} = this.state
+
+        const arr = [firstName, lastName, city, address, phoneNumber, email]
+
+        const arrAfterFiltering = arr.filter(item => item != null && item.length > 3)
+
+        if (arr.length != arrAfterFiltering.length) {
+            return
+        }
+
+        userService.getConfigurableResource(
+            "/cart/process",
+            "POST",
+            {"Content-Type":"application/json", "STATE_ID":stateID},
+            {
+                firstName: firstName,
+                lastName: lastName,
+                city: city,
+                address: address,
+                phoneNumber: phoneNumber,
+                email: email
+            }
+        ).then()
+    }
+
+    handleInputChanges = (event) => {
+        const target = event.target
+        const inputName = target.name
+        const inputValue = target.value
+
+        this.setState({
+            [inputName]: inputValue
+        })
     }
 
     render() {
@@ -135,8 +177,6 @@ class Cart extends Component {
 
         let totalPrice = 0
 
-        console.log(cart)
-
         cart.forEach(item => {
             totalPrice += (item.amount * item.price)
         })
@@ -150,8 +190,37 @@ class Cart extends Component {
                 </div>
                 {checkout ? 
                         <div>
-                            <form onSubmit={this.checkoutSubmit()}>
-                                
+                            <form onSubmit={this.checkoutSubmit}>
+                                <input type="text"
+                                    name="firstName"
+                                    value={this.state.firstName}
+                                    placeholder="First Name"
+                                    onChange={this.handleInputChanges}/>
+                                <input type="text"
+                                    name="lastName"
+                                    value={this.state.lastName}
+                                    placeholder="Last Name"
+                                    onChange={this.handleInputChanges}/>
+                                <input type="text"
+                                    name="city"
+                                    value={this.state.city}
+                                    placeholder="City"
+                                    onChange={this.handleInputChanges}/>
+                                <input type="text"
+                                    name="address"
+                                    value={this.state.address}
+                                    placeholder="Address"
+                                    onChange={this.handleInputChanges}/>
+                                <input type="text"
+                                    name="phoneNumber"
+                                    value={this.state.phoneNumber}
+                                    placeholder="Phone Number"
+                                    onChange={this.handleInputChanges}/>
+                                <input type="text"
+                                    name="email"
+                                    value={this.state.email}
+                                    placeholder="Email"
+                                    onChange={this.handleInputChanges}/>
                             </form>
                         </div> : 
                         null}
