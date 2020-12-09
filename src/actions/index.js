@@ -35,6 +35,19 @@ const clearCart = () => {
     }
 }
 
+const addStateID = (stateID) => {
+    return {
+        type: "ADD_STATE_ID",
+        payload: stateID
+    }
+}
+
+const removeStateID = () => {
+    return {
+        type: "REMOVE_STATE_ID"
+    }
+}
+
 const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN)
     localStorage.removeItem(ROLES)
@@ -51,5 +64,7 @@ export {
     addClothToCart,
     deleteClothFromCart,
     logout,
-    clearCart
+    clearCart,
+    addStateID,
+    removeStateID
 }

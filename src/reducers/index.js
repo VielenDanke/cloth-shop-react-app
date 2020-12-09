@@ -4,7 +4,8 @@ const initialState = {
     token: "",
     roles: "",
     cart: [],
-    promotions: []
+    promotions: [],
+    stateID: ""
 }
 
 const reducer = (state = initialState, action) => {
@@ -57,6 +58,16 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 cart: []
             }         
+        case "ADD_STATE_ID":
+            return {
+                ...state,
+                stateID: action.payload
+            }    
+        case "REMOVE_STATE_ID":
+            return {
+                ...state,
+                stateID: ""
+            }    
         case "LOGOUT":
             return {
                 ...state,

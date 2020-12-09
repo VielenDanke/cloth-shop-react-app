@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import WithClothService from "../hoc"
 import Checkout from "../checkout"
 import {connect} from 'react-redux'
-import {deleteClothFromCart} from "../../actions"
+import {deleteClothFromCart, addStateID} from "../../actions"
 import {transformToRenderedImages} from "../../services/imageService"
 import {Button, ListGroup, ListGroupItem, Spinner, Row, Col, CardBody, Card, CardTitle,
         CardSubtitle, UncontrolledCarousel, CardText} from 'reactstrap'
@@ -61,11 +61,9 @@ class Cart extends Component {
     }
 
     proceedingToCheckout = () => {
-        const {cart, userService} = this.props
+        const {cart, userService, addStateID} = this.props
 
-        console.log(JSON.stringify({
-            clothCartList: cart
-        }))
+        let stateID
 
         userService.getConfigurableResource(
             "/cart/reserve", 
@@ -77,17 +75,28 @@ class Cart extends Component {
         ).then(res => {
             const headers = res.headers
 
-            localStorage.setItem("STATE_ID", headers.get("STATE_ID"))
+            stateID = headers.get("STATE_ID")
 
             return res
         })
+        .then(res => userService.getConfigurableResource(
+            "/cart/retrieve",
+            "POST",
+            {"Content-Type":"application/json", "STATE_ID":stateID},
+            null
+        ))
         .then(res => res.json())
-        .then(res => res.clothCartList.map(item => item.id))
-        .then(ids => this.fetchClothesCart(ids))
+        .then(res => {
+            res.clothCartList.map(item => item.id)
+        })
+        .then(ids => {
+            this.fetchClothesCart(ids)
+            addStateID(stateID)
+        })
     }
 
     render() {
-        const {cart} = this.props
+        const {cart, stateID} = this.props
         const {userCart} = this.state
 
         if (!userCart) {
@@ -126,8 +135,6 @@ class Cart extends Component {
             totalPrice += (item.amount * item.price)
         })
 
-        const stateID = localStorage.getItem("STATE_ID")
-
         return (
             <>
                 {stateID && stateID !== null && stateID.length > 0 ? 
@@ -139,12 +146,11 @@ class Cart extends Component {
                                     {renderedCart}
                                 </ListGroup>
                             </div>
+                            <div>
+                                <Button onClick={this.proceedingToCheckout}>Proceeding to checkout</Button>
+                            </div>
                         </>
                 }
-                <div>
-                    <Button onClick={this.proceedingToCheckout}>Proceeding to checkout</Button>
-                </div>
-
             </>
         )
     }
@@ -152,12 +158,14 @@ class Cart extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        cart: state.cart
+        cart: state.cart,
+        stateID: state.stateID
     }
 }
 
 const mapDispatchToProps = {
-    deleteClothFromCart
+    deleteClothFromCart,
+    addStateID
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(Cart))

@@ -24,8 +24,6 @@ class ClothItem extends Component {
 
         const numAmountToBuy = Number.parseInt(amountToBuy)
 
-        console.log(id)
-
         if (numAmountToBuy !== 0 && numAmountToBuy <= Number.parseInt(splittedLineSize[2])) {
 
             const clothCartItem = {
@@ -73,9 +71,13 @@ class ClothItem extends Component {
                                     <Button onClick={(event) => onClothDelete(id, event)}>Delete</Button> : 
                                     null
 
+        const amount = Number.parseInt(this.state.lineSize.split(" ")[2])                                   
+
         const renderAddButton = cart.find(item => item.id === id) ? 
                                 <CardText>Already in the cart</CardText> :
-                                <Button onClick={() => this.clothToCart()}>Add to cart</Button>
+                                    amount === null || amount === 0 ?
+                                    null :
+                                    <Button onClick={() => this.clothToCart()}>Add to cart</Button>
 
         return (
                 <Row>
@@ -89,12 +91,17 @@ class ClothItem extends Component {
                             <CardBody>
                                 <CardText>{price} KZT</CardText>
                                 <CardText>{description}</CardText>
-                                <label>
-                                    Choose line size
-                                    <select value={this.state.lineSize} onChange={this.handleOptionLineSizeChanges}>
-                                        {renderLineSizes}
-                                    </select>
-                                </label>
+                                {renderLineSizes.length === 0 ? 
+                                null : 
+                                    <label>
+                                        Choose line size
+                                        <select value={this.state.lineSize} onChange={this.handleOptionLineSizeChanges}>
+                                            {renderLineSizes}
+                                        </select>
+                                    </label>
+                                }
+                                {renderLineSizes.length === 0 || amount === 0 ?
+                                "Cloth is not present" :
                                 <label>
                                     Amount of cloth to buy
                                     <input type="number"
@@ -102,7 +109,7 @@ class ClothItem extends Component {
                                     placeholder="Amount to buy"
                                     value={this.state.amountToBuy}
                                     onChange={this.handleInputChanges}/>
-                                </label>
+                                </label>}
                                 {renderAddButton}
                                 {renderDeleteButton}
                             </CardBody>

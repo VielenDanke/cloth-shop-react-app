@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import WithClothService from '../hoc'
-import {clearCart} from "../../actions"
+import {clearCart, removeStateID} from "../../actions"
 import { Button } from 'reactstrap'
 
 class Checkout extends Component {
@@ -19,13 +19,13 @@ class Checkout extends Component {
     componentWillUnmount() {
         const {isCheckoutSuccess} = this.state
 
-        const {userService} = this.props
+        const {userService, stateID} = this.props
 
         if (!isCheckoutSuccess) {
             userService.getConfigurableResource(
-                "/cart/unreserve",
+                "/cart/reserve/decline",
                 "POST",
-                {"Content-Type":"application/json"},
+                {"Content-Type":"application/json", "STATE_ID":stateID},
                 null
             )
         }
@@ -34,9 +34,7 @@ class Checkout extends Component {
     checkoutSubmit = (event) => {
         event.preventDefault()
 
-        const {userService, clearCart} = this.props
-
-        const stateID = localStorage.getItem("STATE_ID")
+        const {userService, clearCart, removeStateID, stateID} = this.props
 
         const {firstName, lastName, city, address, phoneNumber, email} = this.state
 
@@ -64,13 +62,25 @@ class Checkout extends Component {
             this.setState({
                 isCheckoutSuccess: true
             })
-            localStorage.removeItem("STATE_ID")
+            removeStateID()
             clearCart()
         })
     }
 
     cancelCheckout = (event) => {
         event.preventDefault()
+
+        const {userService, removeStateID, stateID} = this.props
+
+        userService.getConfigurableResource(
+            "/cart/reserve/decline",
+            "POST",
+            {"Content-Type":"application/json", "STATE_ID":stateID},
+            null
+        ).then(res => {
+            this.setState({isCheckoutSuccess: false})
+            removeStateID()
+        })
     }
 
     handleInputChanges = (event) => {
@@ -142,12 +152,14 @@ class Checkout extends Component {
 const mapStateToProps = (state) => {
     return {
         token: state.token,
-        roles: state.roles
+        roles: state.roles,
+        stateID: state.stateID
     }
 }
 
 const mapDispatchToProps = {
-    clearCart
+    clearCart,
+    removeStateID
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(Checkout))
