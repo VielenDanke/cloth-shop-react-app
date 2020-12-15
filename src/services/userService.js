@@ -15,11 +15,19 @@ export default class UserService {
     getConfigurableResource = async (url, method, headers, body) => {
         const searchingDefaultUrl = `${this._defaultUrl}${url}`
 
-        const res = await fetch(searchingDefaultUrl, {
+        let requestObj = {
             method: method,
             headers: headers,
-            body: JSON.stringify(body)
-        });
+        }
+
+        if (body != null) {
+            requestObj = {
+                ...requestObj,
+                body: JSON.stringify(body)
+            }
+        }
+
+        const res = await fetch(searchingDefaultUrl, requestObj);
     
         if (!res.ok) {
           throw new Error(`Could not fetch ${searchingDefaultUrl}` +
@@ -37,7 +45,7 @@ export default class UserService {
         });
     
         if (!res.ok) {
-          throw new Error(`Could not fetch ${searchingDefaultUrl}` +
+            throw new Error(`Could not fetch ${searchingDefaultUrl}` +
             `, received ${res.status}`);
         }
         return await res.json();

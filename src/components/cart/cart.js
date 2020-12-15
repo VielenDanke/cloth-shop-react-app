@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import WithClothService from "../hoc"
+import Checkout from "../checkout"
 import {connect} from 'react-redux'
-import {deleteClothFromCart} from "../../actions"
+import {deleteClothFromCart, addStateID} from "../../actions"
 import {transformToRenderedImages} from "../../services/imageService"
 import {Button, ListGroup, ListGroupItem, Spinner, Row, Col, CardBody, Card, CardTitle,
         CardSubtitle, UncontrolledCarousel, CardText} from 'reactstrap'
@@ -9,7 +10,6 @@ import {Button, ListGroup, ListGroupItem, Spinner, Row, Col, CardBody, Card, Car
 class Cart extends Component {
     state = {
         userCart: [],
-        checkout: false,
         firstName: "",
         lastName: "",
         city: "",
@@ -26,7 +26,7 @@ class Cart extends Component {
         }
         const ids = cart.map(item => item.id)
         
-        this.fetchClothesCart(ids, false)
+        this.fetchClothesCart(ids)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -35,11 +35,11 @@ class Cart extends Component {
         const ids = cart.map(item => item.id)
 
         if (prevProps.cart.length !== cart.length) {
-            this.fetchClothesCart(ids, false)
+            this.fetchClothesCart(ids)
         }
     }
 
-    fetchClothesCart = (ids, checkout) => {
+    fetchClothesCart = (ids) => {
         const {clothService} = this.props
 
         clothService.performRequest(
@@ -49,8 +49,7 @@ class Cart extends Component {
              "/clothes/cart")
         .then(res => {
             this.setState({
-                userCart: res,
-                checkout: checkout
+                userCart: res
             })
         })
     }
@@ -62,40 +61,46 @@ class Cart extends Component {
     }
 
     proceedingToCheckout = () => {
-        const {cart, userService} = this.props
+        const {cart, userService, addStateID} = this.props
+
+        let stateID
 
         userService.getConfigurableResource(
             "/cart/reserve", 
             "POST",
             {"Content-Type":"application/json"},
-            cart
-        ).then(res => res.json())
-        .then(res => res.map(item => item.id))
-        .then(ids => this.fetchClothesCart(ids, true))
-    }
+            {
+                clothCartList: cart
+            }
+        ).then(res => {
+            const headers = res.headers
 
-    checkoutSubmit = (event) => {
-        event.preventDefault()
+            stateID = headers.get("STATE_ID")
+
+            return res
+        })
+        .then(res => userService.getConfigurableResource(
+            "/cart/retrieve",
+            "POST",
+            {"Content-Type":"application/json", "STATE_ID":stateID},
+            null
+        ))
+        .then(res => res.json())
+        .then(res => {
+            res.clothCartList.map(item => item.id)
+        })
+        .then(ids => {
+            this.fetchClothesCart(ids)
+            addStateID(stateID)
+        })
     }
 
     render() {
-        const {cart, token, roles, userService} = this.props
-        const {userCart, checkout} = this.state
+        const {cart, stateID} = this.props
+        const {userCart} = this.state
 
         if (!userCart) {
             return <Spinner/>
-        }
-
-        if (token && roles) {
-            userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
-                .then(res => this.setState({
-                    firstName: res.firstName,
-                    lastName: res.surname,
-                    city: res.city,
-                    address: res.address,
-                    phoneNumber: res.phoneNumber,
-                    email: res.username
-                }))
         }
 
         const renderedCart = userCart.map(item => {
@@ -129,25 +134,23 @@ class Cart extends Component {
         cart.forEach(item => {
             totalPrice += (item.amount * item.price)
         })
+
         return (
             <>
-                <div>Total price: {totalPrice}</div>
-                <div>
-                    <ListGroup>
-                        {renderedCart}
-                    </ListGroup>
-                </div>
-                {checkout ? 
-                        <div>
-                            <form onSubmit={this.checkoutSubmit()}>
-                                
-                            </form>
-                        </div> : 
-                        null}
-                <div>
-                    <Button onClick={this.proceedingToCheckout()}>Proceeding to checkout</Button>
-                </div>
-
+                {stateID && stateID !== null && stateID.length > 0 ? 
+                        <Checkout/> : 
+                        <>
+                            <div>Total price: {totalPrice}</div>
+                            <div>
+                                <ListGroup>
+                                    {renderedCart}
+                                </ListGroup>
+                            </div>
+                            <div>
+                                <Button onClick={this.proceedingToCheckout}>Proceeding to checkout</Button>
+                            </div>
+                        </>
+                }
             </>
         )
     }
@@ -156,13 +159,13 @@ class Cart extends Component {
 const mapStateToProps = (state) => {
     return {
         cart: state.cart,
-        token: state.token,
-        roles: state.roles
+        stateID: state.stateID
     }
 }
 
 const mapDispatchToProps = {
-    deleteClothFromCart
+    deleteClothFromCart,
+    addStateID
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(Cart))

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import WithClothService from "../hoc"
 import {Spinner} from "reactstrap"
+import {logout} from "../../actions"
 
 class UserCabinet extends Component {
 
@@ -10,13 +11,15 @@ class UserCabinet extends Component {
     }
 
     componentDidMount() {
-        const {userService, token} = this.props
+        const {userService, token, logout} = this.props
 
         userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
             .then(res => {
                 this.setState({
                     user: res
                 })
+            }).catch(resError => {
+                logout()
             })
     }
 
@@ -41,4 +44,8 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default WithClothService()(connect(mapStateToProps)(UserCabinet))
+const mapDispatchToProps = {
+    logout
+}
+
+export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(UserCabinet))
