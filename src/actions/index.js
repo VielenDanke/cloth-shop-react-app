@@ -1,5 +1,3 @@
-import {ACCESS_TOKEN, ROLES} from "../constants"
-
 const categoryLoaded = (categories) => {
     return {
         type: "CATEGORY_LIST",
@@ -49,8 +47,6 @@ const removeStateID = () => {
 }
 
 const logout = () => {
-    localStorage.removeItem(ACCESS_TOKEN)
-    localStorage.removeItem(ROLES)
     return {
         type: "LOGOUT",
         token: "",

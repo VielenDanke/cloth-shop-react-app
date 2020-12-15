@@ -56,7 +56,7 @@ class LoginForm extends Component {
             })
             .catch(reason => {
                 this.setState({
-                    resultObject: {success: false, message: 'Login failed'}, 
+                    resultObject: {success: false, message: 'Login or password is not correct'}, 
                     username: '',
                     password: ''
                 })

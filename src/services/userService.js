@@ -45,7 +45,7 @@ export default class UserService {
         });
     
         if (!res.ok) {
-          throw new Error(`Could not fetch ${searchingDefaultUrl}` +
+            throw new Error(`Could not fetch ${searchingDefaultUrl}` +
             `, received ${res.status}`);
         }
         return await res.json();
