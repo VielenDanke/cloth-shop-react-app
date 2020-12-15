@@ -126,8 +126,6 @@ class Cart extends Component {
 
         let totalPrice = 0
 
-        console.log(cart)
-
         cart.forEach(item => {
             totalPrice += (item.amount * item.price)
         })
