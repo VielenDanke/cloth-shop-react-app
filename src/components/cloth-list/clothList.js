@@ -15,7 +15,8 @@ class ClothList extends Component {
         filterAge: '',
         filterColor: '',
         clothesHeightFilter: [],
-        clothesAgeFilter: []
+        clothesAgeFilter: [],
+        clothesColorFilter: []
     }
 
     componentDidMount() {
@@ -41,11 +42,13 @@ class ClothList extends Component {
                 const lineSizes = res.flatMap(item => item.lineSizes)
                 const uniquHeightArray = [...new Set(lineSizes.map(item => item.height))]
                 const uniqueAgeArray = [...new Set(lineSizes.map(item => item.age))]
+                const uniqueColorArray = [...new Set(res.map(item => item.color))]
                 this.setState({
                     clothes: res, 
                     loading: false,
                     clothesHeightFilter: uniquHeightArray,
-                    clothesAgeFilter: uniqueAgeArray
+                    clothesAgeFilter: uniqueAgeArray,
+                    clothesColorFilter: uniqueColorArray
                 })
             })
     }
@@ -105,7 +108,7 @@ class ClothList extends Component {
                 age: Number.parseInt(filterAge)
             }
         }
-        if (filterColor !== "" && filterColor) {
+        if (filterColor !== "all" && filterColor !== "") {
             searchingObject = {
                 ...searchingObject,
                 color: filterColor.toLowerCase()
@@ -131,7 +134,7 @@ class ClothList extends Component {
     }
     
     render() {
-        const {clothes, loading, clothesHeightFilter, clothesAgeFilter} = this.state
+        const {clothes, loading, clothesHeightFilter, clothesAgeFilter, clothesColorFilter} = this.state
 
         const renderedUniqueHeightList = clothesHeightFilter.map(item => {
             return (
@@ -139,7 +142,13 @@ class ClothList extends Component {
             )
         })
 
-        const rendereUniqueAgeList = clothesAgeFilter.map(item => {
+        const renderedUniqueAgeList = clothesAgeFilter.map(item => {
+            return (
+                <option value={item}>{item}</option>
+            )
+        })
+
+        const renderedUniqueColorList = clothesColorFilter.map(item => {
             return (
                 <option value={item}>{item}</option>
             )
@@ -169,16 +178,15 @@ class ClothList extends Component {
                         Age filter
                         <select value={this.state.filterAge} onChange={this.handleAgeChangeFilter}>
                             <option value="all">All</option>
-                            {rendereUniqueAgeList}
+                            {renderedUniqueAgeList}
                         </select>
                     </label>
                     <label>
                         Color to find
-                        <input type="text"
-                            name="filterColor"
-                            placeholder="Color"
-                            value={this.state.filterColor}
-                            onChange={this.handleInputChanges}/>
+                        <select value={this.state.filterColor} onChange={this.handleColorChangeFilter}>
+                            <option value="all">All</option>
+                            {renderedUniqueColorList}
+                        </select>
                     </label>
                     <form onSubmit={this.searchCloth}>
                         <button type="submit">Search</button>
