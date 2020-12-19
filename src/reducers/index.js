@@ -73,7 +73,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 token: action.token,
                 roles: action.roles
-            }  
+            }
+        case "USER_UPDATE_WITH_TOKEN":
+            return {
+                ...state,
+                token: action.payload
+            }      
         default:
             return state 
     }

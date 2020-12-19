@@ -13,6 +13,13 @@ const userLoaded = (token, roles) => {
     }
 }
 
+const updateUserWithToken = (token) => {
+    return {
+        type: "USER_UPDATE_WITH_TOKEN",
+        payload: token
+    }
+}
+
 const addClothToCart = (cloth) => {
     return {
         type: "CLOTH_TO_CART",
@@ -62,5 +69,6 @@ export {
     logout,
     clearCart,
     addStateID,
-    removeStateID
+    removeStateID,
+    updateUserWithToken
 }
