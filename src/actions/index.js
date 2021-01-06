@@ -5,6 +5,13 @@ const categoryLoaded = (categories) => {
     }
 }
 
+const addCategory = (category) => {
+    return {
+        type: "ADD_CATEGORY",
+        payload: category
+    }
+}
+
 const userLoaded = (token, roles) => {
     return {
         type: "USER_LOADED",
@@ -70,5 +77,6 @@ export {
     clearCart,
     addStateID,
     removeStateID,
-    updateUserWithToken
+    updateUserWithToken,
+    addCategory
 }

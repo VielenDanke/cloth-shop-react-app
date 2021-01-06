@@ -3,7 +3,7 @@ import WithClothService from '../hoc'
 import {Spinner} from 'reactstrap'
 import {connect} from 'react-redux'
 import { ListGroup, ListGroupItem } from 'reactstrap'
-import {categoryLoaded} from "../../actions"
+import {categoryLoaded, addCategory} from "../../actions"
 
 class AdminCabinet extends Component {
 
@@ -28,11 +28,12 @@ class AdminCabinet extends Component {
         materialPercentage: null,
         lineSizes: [],
         materialList: [],
-        clothFileImages: undefined
+        clothFileImages: undefined,
+        categoryName: ""
     }
 
     componentDidMount() {
-        const {userService, token, clothService, categoryService, categoryLoaded} = this.props
+        const {userService, token, clothService} = this.props
 
         userService.getUserInSession("/cabinet", "GET", {"accessToken":token})
             .then(res => {
@@ -43,13 +44,6 @@ class AdminCabinet extends Component {
         clothService.getPromotions()
             .then(res => {
                 this.setState({promotions: res})
-            })
-        categoryService.getAllCategories()
-            .then(res => {
-                categoryLoaded(res)
-                this.setState({
-                    clothCategory: res[0].category
-                })
             })
     }
 
@@ -236,6 +230,35 @@ class AdminCabinet extends Component {
         event.target.reset()
     }
 
+    performCategorySaving = (event) => {
+        event.preventDefault()
+
+        const {categoryService, token, addCategory} = this.props
+
+        const categorySaveRequest = {
+            categoryName: this.state.categoryName
+        }
+        categoryService.addCategory("POST", {"accessToken":token, "Content-Type":"application/json"}, categorySaveRequest)
+            .then(res => {
+                event.target.reset()
+                addCategory(res)
+            })
+    }
+
+    renderCategoryUploadComponent = () => {
+        return (
+            <form onSubmit={this.performCategorySaving}>
+                <input type="text"
+                    name="categoryName"
+                    className="form-control"
+                    placeholder="Category name"
+                    onChange={this.handleInputChanges}
+                    value={this.state.categoryName}/>
+                <button className="btn btn-primary">Upload new category</button>
+            </form>
+        )
+    }
+
     renderPromotionUploadComponent = () => {
         return (
             <form onSubmit={this.performPromotionSaving}>
@@ -308,14 +331,6 @@ class AdminCabinet extends Component {
     }
 
     renderClothUploadComponent = () => {
-        const {categories} = this.props
-
-        const optionCategories = categories.map(item => {
-            return (
-                <option value={item.category}>{item.category}</option>
-            )
-        })
-
         return (
             <form onSubmit={this.performClothSaving}>
                 <input type="text" 
@@ -349,12 +364,12 @@ class AdminCabinet extends Component {
                     placeholder="Cloth price"
                     onChange={this.handleInputChanges} 
                     value={this.state.clothPrice}/>
-                <label>
-                    Cloth category
-                    <select value={this.state.clothCategory} onChange={this.handleOptionCategoryChanges}>
-                        {optionCategories}
-                    </select>
-                </label>
+                <input type="text"
+                    name="clothCategory"
+                    className="form-control"
+                    placeholder="Cloth category"
+                    onChange={this.handleInputChanges}
+                    value={this.state.clothCategory}/>
                 <input type="file"
                     name="file"
                     className="form-control"
@@ -407,6 +422,7 @@ class AdminCabinet extends Component {
             <div>
                 <h1>Hello, {user.username}</h1>
                 <div>
+                    {this.renderCategoryUploadComponent()}
                     {this.renderPromotionUploadComponent(roles)}  
                     {this.renderClothLineSizeUploadComponent()}
                     {this.renderClothMaterialUploadComponent()}
@@ -429,7 +445,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-    categoryLoaded
+    categoryLoaded, addCategory
 }
 
 export default WithClothService()(connect(mapStateToProps, mapDispatchToProps)(AdminCabinet))
